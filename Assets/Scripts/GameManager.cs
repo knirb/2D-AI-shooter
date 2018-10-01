@@ -13,10 +13,13 @@ public class GameManager : MonoBehaviour {
     public int numberOfPlayers;
     public int shotsPerRound;
     public int botsDone = 0;
+    public int nInputs;
+    public int nOutputs;
+    public int nHidden;
     public static GameManager instance = null;
     public GameObject bot;
     public GameObject background;
-    public GameObject enemy;
+    public GameObject enemyPrefab;
     public GameObject intermissionImage;
     public Vector3 startPositionBot;
     public Vector3 startPositionEnemy;
@@ -28,6 +31,7 @@ public class GameManager : MonoBehaviour {
     private float timeNextRound;
     private List<GameObject> botList = new List<GameObject>();
     private int curGen;
+    private GameObject enemy;
 
     void Awake () {
         if (instance == null)
@@ -80,6 +84,7 @@ public class GameManager : MonoBehaviour {
     private void EndRound()
     {
         List<NeuralNetwork> newNNs = population.Generate();
+        intermissionImage.GetComponentInChildren<Text>().text = "Generation " + curGen + "\n" + "Highest score: " + population.botList[0].score;
         for (int i = 0; i < botList.Count; i++)
         {
             botList[i].GetComponent<Bot>().nn = newNNs[i];
@@ -89,7 +94,6 @@ public class GameManager : MonoBehaviour {
         timeNextRound = Time.time + timeBetweenRounds;
         curGen++;
         intermissionImage.SetActive(true);
-        intermissionImage.GetComponentInChildren<Text>().text = "Generation " + curGen;
         playing = false;
     }
 
@@ -103,15 +107,17 @@ public class GameManager : MonoBehaviour {
             b.GetComponent<Bot>().ammo = shotsPerRound;
             b.GetComponent<Bot>().done = false;
         }
+        enemy.transform.position = startPositionEnemy;
+        enemy.GetComponent<Rigidbody2D>().velocity = new Vector3(0, 1, 0) * enemy.GetComponent<Movement_UpDown>().movementSpeed;
     }
 
     private void CreateEnemy()
     {
-        GameObject inst = Instantiate(enemy, startPositionEnemy, Quaternion.identity);
-        inst.name = "Enemy";
+        enemy = Instantiate(enemyPrefab, startPositionEnemy, Quaternion.identity);
+        enemy.name = "Enemy";
     }
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
 
         if (!boardExists && Time.time >= timeBetweenRounds)
             initGame();

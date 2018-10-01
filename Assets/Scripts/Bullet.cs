@@ -24,7 +24,7 @@ public class Bullet : MonoBehaviour {
     }
 	
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate() {
         curDist = (enemy.transform.position - transform.position).sqrMagnitude;
         if (curDist < minDist)
             minDist = curDist;

@@ -4,9 +4,14 @@ using UnityEngine;
 
 public class Population {
 
-    private List<GameObject> enemyList;
-    private List<Bot> botList;
-    private float mutationRate = 0.05f;
+    public List<GameObject> enemyList;
+    public List<Bot> botList;
+
+    private GameManager gm;
+    private int nInput;
+    private int nOutput;
+    private int nHidden;
+    private float mutationRate = 0.20f;
     private int savedPerGen = 2;
     private int specialsPerGen = 0; //Specials are heavily mutated children to introduce more variation in the gene samples.
 
@@ -14,10 +19,15 @@ public class Population {
     {
         enemyList = bl;
         botList = new List<Bot>();
+        gm = GameObject.Find("GameManager").GetComponent<GameManager>();
+
         foreach (GameObject go in enemyList)
         {
             botList.Add(go.GetComponent<Bot>());
         }
+        nInput = gm.nInputs;
+        nOutput = gm.nOutputs;
+        nHidden = gm.nHidden;
     }
 
     public List<NeuralNetwork> Generate()
@@ -41,6 +51,7 @@ public class Population {
         for (i = 0; i < savedPerGen; i++)
         {
             nextGeneration.Add(botList[i].nn);
+            Debug.Log("Saved Parent");
         }
         for (i = savedPerGen; i< botList.Count - specialsPerGen; i++)
         {
@@ -61,13 +72,13 @@ public class Population {
     {
         NeuralNetwork parentA = SelectParent();
         NeuralNetwork parentB = SelectParent();
-        NeuralNetwork child = new NeuralNetwork();
+        NeuralNetwork child = new NeuralNetwork(nInput,nOutput,nHidden);
         float[] wA = parentA.GetWeights();
         float[] wB = parentB.GetWeights();
         float[] wChild = new float[wA.Length];
         for (int i = 0; i < wA.Length; i++)
         {
-            if(Random.Range(0f,1f) < 0.5)
+            if(Random.Range(0f,1f) < 0.2)
             {
                 wChild[i] = wA[i];
             }
@@ -85,7 +96,7 @@ public class Population {
     NeuralNetwork SelectParent()
     {
         float r = Random.Range(0f, 1f);
-        NeuralNetwork parent = new NeuralNetwork();
+        NeuralNetwork parent = new NeuralNetwork(nInput,nOutput,nHidden);
         foreach (GameObject go in enemyList)
         {
             Bot curBot = go.GetComponent<Bot>();
@@ -105,7 +116,7 @@ public class Population {
 
     NeuralNetwork GenerateSpecial()
     {
-        return new NeuralNetwork();
+        return new NeuralNetwork(nInput,nOutput,nHidden);
     }
     void CalculateProbabilities()
     {
@@ -130,7 +141,7 @@ public class Population {
         {
             if (Random.Range(0f, 1f) < mutationRate)
             {
-                mutatedInp[i] = Random.Range(0f, 1f);
+                mutatedInp[i] += Random.Range(1f, 1f) * (mutatedInp[i] + 0.001f)/10;
             }
             else
                 mutatedInp[i] = inp[i];

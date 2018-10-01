@@ -16,7 +16,7 @@ public class Player : MonoBehaviour {
 	}
 	
 
-	void Update () {
+	void FixedUpdate() {
         
         if (Input.GetButtonDown("Fire1"))
         {

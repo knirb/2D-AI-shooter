@@ -10,6 +10,7 @@ public class Bot : MonoBehaviour {
     public int ammo;
     public int numberOfInputs; //For NeuralNetwork
     public int numberOfOutputs; // NN outputs;
+    public int numberOfHidden;
     public float score; //Total score for this bot.
     public float scoreHitTarget;
     public float fireRate; // Bullets per Second
@@ -33,17 +34,19 @@ public class Bot : MonoBehaviour {
 
     void Start()
     {
-
-        nn = new NeuralNetwork(); //Currently using non parametrized constructor.
-        gm = GameObject.Find("GameManager").GetComponent<GameManager>(); 
-        numberOfInputs = nn.nInput;
-        numberOfOutputs = nn.nOutput;
+        gm = GameObject.Find("GameManager").GetComponent<GameManager>();
+        numberOfInputs = gm.nInputs;
+        numberOfOutputs = gm.nOutputs;
+        numberOfHidden = gm.nHidden;
+        nn = new NeuralNetwork(numberOfInputs, numberOfOutputs, numberOfHidden); //Currently using non parametrized constructor.
+         
+        
         ID = gameObject.name;
         enemy = GameObject.Find("Enemy"); 
     }
 
 
-    void Update()
+    void FixedUpdate()
     {
         if (!done)
         {
@@ -117,7 +120,7 @@ public class Bot : MonoBehaviour {
 
     public void MissedTarget(float sqrdDist)
     {
-        score += (1 - sqrdDist/Mathf.Pow(5f-0.24f,2))*scoreHitTarget*0.8f;
+        score += (1 - sqrdDist/Mathf.Pow(5f-0.24f,2))*scoreHitTarget*0.1f;
         bulletsInAir--;
         if (bulletsInAir < 0)
             Debug.Break();
@@ -142,6 +145,8 @@ public class Bot : MonoBehaviour {
         nnInput[1] = transform.position.y / 2.35f;
         nnInput[2] = enemy.transform.position.x / 2.35f;
         nnInput[3] = enemy.transform.position.y / 2.35f;
+        nnInput[4] = enemy.GetComponent<Rigidbody2D>().velocity.x;
+        nnInput[5] = enemy.GetComponent<Rigidbody2D>().velocity.y;
     }
 
     void ScaleOutputs()

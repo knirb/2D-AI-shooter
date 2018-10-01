@@ -21,12 +21,15 @@ public class NeuralNetwork {
     public float lowerWeightLimit = -1f;
     public float higherWeightLimit = 1f;
 
-    //Constructors for varying levels of specificity. 
+    //Constructors for varying levels of specificity.   
     //Use public NeuralNetwork(int nIn, int nOut, int nHid) for your own network.
 
     #region CONSTRUCTORS
     public NeuralNetwork() {
 
+        nInput = 4;
+        nOutput = 2;
+        nHidden = 3;
         GenerateWeights(nInput, nHidden, out w);
         GenerateWeights(nHidden, nOutput, out v);
 
@@ -44,14 +47,12 @@ public class NeuralNetwork {
     }
     public NeuralNetwork(int nIn, int nOut, int nHid)
     {
-
-        GenerateWeights(nInput, nHidden, out w);
-        GenerateWeights(nHidden, nOutput, out v);
-
         nInput = nIn;
         nOutput = nOut;
         nHidden = nHid;
 
+        GenerateWeights(nInput, nHidden, out w);
+        GenerateWeights(nHidden, nOutput, out v);
     }
     #endregion
 
