@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+//Used for vector multiplication of single-dim arrays of floats. 
 public static class Vector {
 
     public static float[] Multiply(float[] v1, float[] v2)
@@ -12,7 +14,8 @@ public static class Vector {
         return v3;
     }
 
-    public static float[] matVecMult(float[] v, float[,] m)
+    //Multiplies vector with matrix, outputs vector
+    public static float[] matVecMult(float[] v, float[,] m) 
     {
         float[] ret = new float[m.GetLength(1)];
         for (int i = 0; i < m.GetLength(1); i++)
@@ -25,6 +28,7 @@ public static class Vector {
         return ret;
     }
 
+    //Adds two vectors element-wise, returns sum. 
     public static float[] Add(float[] v1, float[] v2)
     {
         float[] sum = new float[v1.Length]; 
@@ -34,6 +38,8 @@ public static class Vector {
         }
         return sum;
     }
+
+    //Subtracs v2 from v1, returns sum. 
     public static float[] Subtract(float[] v1, float[] v2)
     {
         float[] sum = new float[v1.Length];

@@ -51,10 +51,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea6ce375fc96d814fac30d10726e4939, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numberOfPlayers: 100
+  numberOfPlayers: 5
   shotsPerRound: 0
+  botsDone: 0
   bot: {fileID: 1348553838564054, guid: d9e88c200a3277b4798cc72ac54a5547, type: 2}
   background: {fileID: 1276779174057292, guid: d3e053a77bf6c4a44857e42ca45001d9, type: 2}
   enemy: {fileID: 1849532367665354, guid: 71a9410a1f0a02f46bd47c7458b89836, type: 2}
-  startPositionBot: {x: -1, y: 0, z: 0}
+  startPositionBot: {x: -1.6, y: 0, z: 0}
   startPositionEnemy: {x: 1.6, y: 0, z: 0}
+  timeBetweenRounds: 2

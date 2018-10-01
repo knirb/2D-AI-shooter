@@ -53,12 +53,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bullet: {fileID: 1511506436160116, guid: 9efaa4508a10c034ba1f42f23b7b8dc3, type: 2}
-  fireRate: 2
   ammo: 10
   numberOfInputs: 4
   numberOfOutputs: 2
   Score: 0
-  targetScore: 10
+  scoreHitTarget: 10
+  fireRate: 2
+  name: 
 --- !u!212 &212131916816925330
 SpriteRenderer:
   m_ObjectHideFlags: 1

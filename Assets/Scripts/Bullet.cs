@@ -8,13 +8,15 @@ public class Bullet : MonoBehaviour {
     public Rigidbody2D rb;
     public GameObject shooter;
 
-    private float minDist;
-    private float curDist;
+    public float minDist;
+    public float curDist;
     private GameObject enemy;
+    private bool hitSomething;
 
 
     // Use this for initialization
     void Start () {
+        hitSomething = false;
         rb = GetComponent<Rigidbody2D>();
         rb.velocity = transform.right * movementSpeed;
         enemy = GameObject.Find("Enemy");
@@ -30,17 +32,21 @@ public class Bullet : MonoBehaviour {
 	}
 
     private void OnTriggerEnter2D(Collider2D hitInfo)
-    {
-        if (hitInfo.name == "Background")
+    {           
+            
+        if (hitInfo.name == "Background" && !hitSomething)
         {
-            shooter.GetComponent<Bot>().missedTarget(minDist);
             Destroy(gameObject);
+            shooter.GetComponent<Bot>().MissedTarget(minDist);
+            hitSomething = true;
         }
-            ;
-        if (hitInfo.name == "Enemy")
+
+        if (hitInfo.name == "Enemy" && !hitSomething)
         {
-            shooter.GetComponent<Bot>().hitTarget();
             Destroy(gameObject);
+            shooter.GetComponent<Bot>().HitTarget();
+            hitSomething = true;
+            
         }
     }
 }

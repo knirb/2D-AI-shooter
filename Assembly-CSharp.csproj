@@ -80,6 +80,7 @@
     <Compile Include="Assets\Scripts\Movement_UpDown.cs" />
     <Compile Include="Assets\Scripts\NeuralNetwork.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />
+    <Compile Include="Assets\Scripts\Population.cs" />
     <Compile Include="Assets\Scripts\Vector.cs" />
     <None Include="Assets\RandomFromDistributions\Examples\DistributionsExamples\DistributionsExamples README.txt" />
     <None Include="Assets\RandomFromDistributions\Readme.txt" />
