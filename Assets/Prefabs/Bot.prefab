@@ -56,10 +56,14 @@ MonoBehaviour:
   ammo: 10
   numberOfInputs: 4
   numberOfOutputs: 2
-  Score: 0
+  numberOfHidden: 0
+  score: 0
   scoreHitTarget: 10
-  fireRate: 2
-  name: 
+  fireRate: 4
+  done: 0
+  ID: 
+  selectionProb: 0
+  bulletsInAir: 0
 --- !u!212 &212131916816925330
 SpriteRenderer:
   m_ObjectHideFlags: 1

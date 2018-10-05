@@ -14,6 +14,7 @@ public class Bot : MonoBehaviour {
     public float score; //Total score for this bot.
     public float scoreHitTarget;
     public float fireRate; // Bullets per Second
+    public float timeSinceShot = 0; //Also used in fireRate;
     public bool done;
     [HideInInspector] public string ID;
     public float selectionProb;
@@ -23,7 +24,8 @@ public class Bot : MonoBehaviour {
     private Vector2 shotDirection; //Normalized direction of shot.
     private bool canShoot = true; //Used to create a fireRate - not being able to fire each frame. 
     public int bulletsInAir = 0;
-    private float timeSinceShot = 0; //Also used in fireRate;
+    
+    private float bulletSpeed;
     private float[] nnOutput; //saveSpace for outPut of NN
     private float[] nnInput; //SaveSpace for inputs going in to nn
     private GameObject enemy;
@@ -38,6 +40,9 @@ public class Bot : MonoBehaviour {
         numberOfInputs = gm.nInputs;
         numberOfOutputs = gm.nOutputs;
         numberOfHidden = gm.nHidden;
+        ammo = gm.shotsPerRound;
+        bulletSpeed = gm.bulletSpeed;
+        bullet.GetComponent<Bullet>().movementSpeed = bulletSpeed;
         nn = new NeuralNetwork(numberOfInputs, numberOfOutputs, numberOfHidden); //Currently using non parametrized constructor.
          
         
@@ -50,23 +55,35 @@ public class Bot : MonoBehaviour {
     {
         if (!done)
         {
-            GenerateInputs(); // Normalizes inputs to scale from 0-1;
             TryShooting(); // TryShooting does what it says
             CheckIfDone(); 
         }
         
     }
 
-
+    public void RoundReset()
+    {
+        ammo = gm.shotsPerRound;
+        done = false;
+        timeSinceShot = 0;
+    }
     //Checks if canShoot and acts accordingly.
     void TryShooting()
     {
         if (canShoot == true)
         {
             playerPosition = transform.position;
+            GenerateInputs(); // Normalizes inputs to scale from 0-1;
             nnOutput = nn.CalculateOutput(nnInput);
             ScaleOutputs();
             shotPosition = new Vector2(nnOutput[0], nnOutput[1]);
+
+            /*Debug.Log(ID + " I: " + nnInput[2] + ", " + nnInput[3]);
+            string ret = "";
+            for (int i = 0; i < nn.GetWeights().Length; i++)
+                ret += nn.GetWeights()[i] + ", ";
+            Debug.Log(ID + " O: " + nnOutput[0] + ", " + nnOutput[1]);
+            Debug.Log(ID + " W:" + ret);*/
 
             /* shotDirection = (shotPosition - playerPosition).normalized; // used if targeting groundposition instead of shotangle;
              * if (shotDirection == Vector2.zero)
@@ -141,6 +158,8 @@ public class Bot : MonoBehaviour {
     void GenerateInputs()
     {
         nnInput = new float[numberOfInputs];
+        for (int i = 0; i < numberOfInputs; i++)
+
         nnInput[0] = transform.position.x / 2.35f;
         nnInput[1] = transform.position.y / 2.35f;
         nnInput[2] = enemy.transform.position.x / 2.35f;

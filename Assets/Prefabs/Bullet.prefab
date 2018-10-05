@@ -89,9 +89,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ccfb5fe6e13e57469e056c6aa23c2fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 2
+  movementSpeed: 20
   rb: {fileID: 0}
   shooter: {fileID: 0}
+  minDist: 0
+  curDist: 0
 --- !u!212 &212863352383848828
 SpriteRenderer:
   m_ObjectHideFlags: 1

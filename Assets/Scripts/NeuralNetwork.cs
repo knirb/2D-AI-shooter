@@ -59,8 +59,8 @@ public class NeuralNetwork {
     //Generating random weights
     void GenerateWeights(int rows, int columns, out float[,] weights)
     {
-        weights = new float[rows, columns];
-        for (int i = 0; i < rows; i++)
+        weights = new float[rows+1, columns];
+        for (int i = 0; i < rows+1; i++)
         {
             for (int j = 0; j < columns; j++)
             {
@@ -93,49 +93,7 @@ public class NeuralNetwork {
             }
         }
     }
-    public void setWeights(float[] wIn)
-    {
-        int count = 0;
-        for (int i = 0; i < nHidden; i++)
-        {
-            for (int j = 0; j < nInput; j++)
-            {
-                w[j, i] = wIn[count];
-                count++;
-            }
-        }
-        for (int i = 0; i < nOutput; i++)
-        {
-            for (int j = 0; j < nHidden; j++)
-            {
-                wIn[count] = v[j, i];
-                count++;
-            }
-        }
-    }
-   public void setWeights(float[] wIn, float[] vIn)
-    {
-        int count = 0;
-        for (int i = 0; i < nInput; i++)
-        {
-            for (int j = 0; j < nHidden; j++)
-            {
-                w[j, i] = wIn[count];
-                count++;
-            }
-        }
-
-        count = 0;
-
-        for (int i = 0; i < nHidden; i++)
-        {
-            for (int j = 0; j < nOutput; j++)
-            {
-                v[j, i] = vIn[count];
-                count++;
-            }
-        }
-    }
+    
 
     //Feeds input to the network, returns the output. 
     public float[] CalculateOutput(float[] inp)
@@ -145,11 +103,19 @@ public class NeuralNetwork {
         //-> pass value on to output nodes, multiplying by v-weights
         //-> pass through node function
         //return output.
+        input = new float[inp.Length + 1];
+        for (int i = 0; i < inp.Length; i++)
+            input[i] = inp[i];
+        input[nInput] = 1; //bias
 
-        input = inp;
+        hidden = new float[nHidden + 1];
+        float[] tempHidden = Vector.matVecMult(input, w); //To each hidden layer node we sum the values of all inputs*weight
+        tempHidden = Relu(tempHidden); // Passing values through activation func.
+        for (int i = 0; i < nHidden; i++)
+            hidden[i] = tempHidden[i];
+        hidden[nHidden] = 1;
+        
 
-        hidden = Vector.matVecMult(input, w); //To each hidden layer node we sum the values of all inputs*weight
-        hidden = Relu(hidden); // Passing values through activation func.
 
         //TODO Add bias term;
 
@@ -162,10 +128,10 @@ public class NeuralNetwork {
     public float[] GetWeights()
     {
         int count = 0;
-        float[] ret = new float[nInput*nHidden + nHidden*nOutput];
+        float[] ret = new float[(nInput+1)*nHidden + (nHidden+1)*nOutput];
         for (int i = 0; i < nHidden; i++)
         {
-            for (int j = 0; j < nInput; j++)
+            for (int j = 0; j < nInput+1; j++)
             {
                 ret[count] = w[j, i];
                 count++;
@@ -173,15 +139,37 @@ public class NeuralNetwork {
         }
         for (int i = 0; i < nOutput; i++)
         {
-            for (int j = 0; j < nHidden; j++)
+            for (int j = 0; j < nHidden+1; j++)
             {
                 ret[count] = v[j, i];
                 count++;
             }
         }
+        //Debug.Log("WeightsGet: " + ret[0] + ", " + ret[1] + ", " + ret[2]);
         return ret;
     }
-    
+
+    public void setWeights(float[] wIn)
+    {
+        int count = 0;
+        //Debug.Log("WeightsSet: " + wIn[0] + ", " + wIn[1] + ", " + wIn[2]);
+        for (int i = 0; i < nHidden; i++)
+        {
+            for (int j = 0; j < nInput + 1; j++)
+            {
+                w[j, i] = wIn[count];
+                count++;
+            }
+        }
+        for (int i = 0; i < nOutput; i++)
+        {
+            for (int j = 0; j < nHidden + 1; j++)
+            {
+                v[j, i] = wIn[count];
+                count++;
+            }
+        }
+    }
     #region Activation Functions
 
     public float[] Relu(float[] inp) // RELU(x) returns 0 if x is less than zero, otherwhise x.

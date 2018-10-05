@@ -11,9 +11,9 @@ public class Population {
     private int nInput;
     private int nOutput;
     private int nHidden;
-    private float mutationRate = 0.20f;
+    private float mutationRate = 0.02f;
     private int savedPerGen = 2;
-    private int specialsPerGen = 0; //Specials are heavily mutated children to introduce more variation in the gene samples.
+    private int specialsPerGen = 2; //Specials are heavily mutated children to introduce more variation in the gene samples.
 
     public Population(List<GameObject> bl)
     {
@@ -45,13 +45,12 @@ public class Population {
 
 
         botList.Sort((x, y) => y.score.CompareTo(x.score));
-
+        Debug.Log(botList[0].score + ", " + botList[1].score + ", " + botList[2].score);
 
         int i;
         for (i = 0; i < savedPerGen; i++)
         {
             nextGeneration.Add(botList[i].nn);
-            Debug.Log("Saved Parent");
         }
         for (i = savedPerGen; i< botList.Count - specialsPerGen; i++)
         {
@@ -67,18 +66,29 @@ public class Population {
         return nextGeneration;
         
     }
+    /*
+     * This version uses genetic material from two parents to create a new child. 
+     */
 
-    NeuralNetwork GenerateChild()
+     /*  
+     NeuralNetwork GenerateChild()
     {
         NeuralNetwork parentA = SelectParent();
         NeuralNetwork parentB = SelectParent();
+        while (parentA == parentB)
+        {
+            Debug.Log("Same Parents not allowed");
+            parentB = SelectParent();
+        }
+        
         NeuralNetwork child = new NeuralNetwork(nInput,nOutput,nHidden);
         float[] wA = parentA.GetWeights();
         float[] wB = parentB.GetWeights();
         float[] wChild = new float[wA.Length];
+        float keepPercentage = 0.5f;
         for (int i = 0; i < wA.Length; i++)
         {
-            if(Random.Range(0f,1f) < 0.2)
+            if(Random.Range(0f,1f) < keepPercentage)
             {
                 wChild[i] = wA[i];
             }
@@ -86,6 +96,32 @@ public class Population {
             {
                 wChild[i] = wB[i];
             }
+        }
+        wChild = Mutate(wChild);
+        child.setWeights(wChild);
+        return child;
+
+    }*/
+    // FOR DEBUGGING
+    /*NeuralNetwork GenerateChild() //DEBUGGING 
+    {
+        NeuralNetwork parentA = SelectParent();
+        NeuralNetwork child = new NeuralNetwork(nInput, nOutput, nHidden);
+        child.setWeights(botList[0].nn.GetWeights()); 
+        return child;
+
+    }*/
+
+    
+    NeuralNetwork GenerateChild()
+    {
+        NeuralNetwork child = new NeuralNetwork(nInput, nOutput, nHidden);
+        float[] wChild = child.GetWeights();
+        for (int i = 0; i < wChild.Length; i++)
+        {
+            NeuralNetwork nn = SelectParent();
+            float[] wA = nn.GetWeights();
+            wChild[i] = wA[i];
         }
         wChild = Mutate(wChild);
         child.setWeights(wChild);
@@ -115,8 +151,10 @@ public class Population {
     }
 
     NeuralNetwork GenerateSpecial()
-    {
-        return new NeuralNetwork(nInput,nOutput,nHidden);
+    { 
+        NeuralNetwork parent = SelectParent();
+        parent.setWeights(Mutate(parent.GetWeights(),mutationRate+0.2f));
+        return parent;
     }
     void CalculateProbabilities()
     {
@@ -141,7 +179,23 @@ public class Population {
         {
             if (Random.Range(0f, 1f) < mutationRate)
             {
-                mutatedInp[i] += Random.Range(1f, 1f) * (mutatedInp[i] + 0.001f)/10;
+                mutatedInp[i] = Random.Range(botList[0].nn.lowerWeightLimit, botList[0].nn.higherWeightLimit);
+            }
+            else
+                mutatedInp[i] = inp[i];
+        }
+
+        return mutatedInp;
+    }
+    float[] Mutate(float[] inp, float mutRate)
+    {
+        float[] mutatedInp = new float[inp.Length];
+
+        for (int i = 0; i < inp.Length; i++)
+        {
+            if (Random.Range(0f, 1f) < mutRate)
+            {
+                mutatedInp[i] = Random.Range(botList[0].nn.lowerWeightLimit, botList[0].nn.higherWeightLimit);
             }
             else
                 mutatedInp[i] = inp[i];

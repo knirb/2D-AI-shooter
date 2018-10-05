@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour {
 
     public int numberOfPlayers;
     public int shotsPerRound;
-    public int botsDone = 0;
+    public int botsDone;
     public int nInputs;
     public int nOutputs;
     public int nHidden;
@@ -25,6 +25,9 @@ public class GameManager : MonoBehaviour {
     public Vector3 startPositionEnemy;
     public Population population;
     public float timeBetweenRounds;
+    public float timeScale;
+    public float playerMoveSpeed;
+    public float bulletSpeed;
 
     private bool boardExists;
     private bool playing;
@@ -41,6 +44,9 @@ public class GameManager : MonoBehaviour {
         boardExists = false;
         intermissionImage = GameObject.Find("IntermissionImage");
         curGen = 1;
+        playerMoveSpeed *= timeScale;
+        bulletSpeed *= timeScale;
+
     }
 
     private void initGame()
@@ -70,10 +76,16 @@ public class GameManager : MonoBehaviour {
         population = new Population(botList);
     }
 
+    private void CreateEnemy()
+    {
+        enemy = Instantiate(enemyPrefab, startPositionEnemy, Quaternion.identity);
+        enemy.name = "Enemy";
+        enemy.GetComponent<Movement_UpDown>().movementSpeed = playerMoveSpeed;
+    }
+
     public void BotDoneShooting(Bot sender) // Called through bots sending message that they are done shooting.
     {
         botsDone++;
-        Debug.Log("Bot done!");
 
         if (botsDone == numberOfPlayers)
         {
@@ -85,12 +97,15 @@ public class GameManager : MonoBehaviour {
     {
         List<NeuralNetwork> newNNs = population.Generate();
         intermissionImage.GetComponentInChildren<Text>().text = "Generation " + curGen + "\n" + "Highest score: " + population.botList[0].score;
+
         for (int i = 0; i < botList.Count; i++)
         {
+            //Debug.Log("Old Weights :" + botList[i].GetComponent<Bot>().nn.GetWeights()[0]);
+            //Debug.Log("New Weights :" + newNNs[i].GetWeights()[0]);
             botList[i].GetComponent<Bot>().nn = newNNs[i];
             botList[i].GetComponent<Bot>().score = 0;
         }
- 
+
         timeNextRound = Time.time + timeBetweenRounds;
         curGen++;
         intermissionImage.SetActive(true);
@@ -102,20 +117,19 @@ public class GameManager : MonoBehaviour {
         playing = true;
         botsDone = 0;
         intermissionImage.SetActive(false);
+
+        
+        
+
         foreach (GameObject b in botList)
         {
-            b.GetComponent<Bot>().ammo = shotsPerRound;
-            b.GetComponent<Bot>().done = false;
+            b.GetComponent<Bot>().RoundReset();
         }
         enemy.transform.position = startPositionEnemy;
         enemy.GetComponent<Rigidbody2D>().velocity = new Vector3(0, 1, 0) * enemy.GetComponent<Movement_UpDown>().movementSpeed;
     }
 
-    private void CreateEnemy()
-    {
-        enemy = Instantiate(enemyPrefab, startPositionEnemy, Quaternion.identity);
-        enemy.name = "Enemy";
-    }
+   
 	// Update is called once per frame
 	void FixedUpdate () {
 
