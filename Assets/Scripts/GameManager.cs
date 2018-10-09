@@ -10,15 +10,22 @@ using UnityEngine;
      * Manage heritage of Genetic Algorithms*/
 public class GameManager : MonoBehaviour {
 
+    public static GameManager instance = null;
     public int numberOfPlayers;
     public int shotsPerRound;
-    public int botsDone;
+    public float timeScale;
+    public float timeBetweenRounds;
+    public float playerMoveSpeed;
+    public float botMoveSpeed;
+    public float bulletSpeed;
+    public float fireRate;
+    
     public int nInputs;
     public int nOutputs;
     public int nLayers;
     public int[] nHidden;
+    public HeritageMethod hm;
     public int parentPoolSize;
-    public static GameManager instance = null;
     public GameObject bot;
     public GameObject background;
     public GameObject enemyPrefab;
@@ -26,13 +33,9 @@ public class GameManager : MonoBehaviour {
     public Vector3 startPositionBot;
     public Vector3 startPositionEnemy;
     public Population population;
-    public float timeBetweenRounds;
-    public float timeScale;
-    public float playerMoveSpeed;
-    public float botMoveSpeed;
-    public float bulletSpeed;
-    public float fireRate;
 
+
+    private int botsDone;
     private bool boardExists;
     private bool playing;
     private float timeNextRound;

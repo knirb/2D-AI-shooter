@@ -72,6 +72,7 @@
     <Compile Include="Assets\RandomFromDistributions\Examples\Monster Spawner Example\Monster.cs" />
     <Compile Include="Assets\RandomFromDistributions\Examples\Monster Spawner Example\MonsterSpawner.cs" />
     <Compile Include="Assets\RandomFromDistributions\Scripts\RandomFromDistribution.cs" />
+    <Compile Include="Assets\Scripts\Algorithms.cs" />
     <Compile Include="Assets\Scripts\Bot.cs" />
     <Compile Include="Assets\Scripts\Bullet.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />

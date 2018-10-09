@@ -17,6 +17,7 @@ public class Population {
     private int savedPerGen = 2;
     private int specialsPerGen = 10; //Specials are heavily mutated children to introduce more variation in the gene samples.
     private int parentPoolSize;
+    private HeritageMethod hm;
 
     public Population(List<GameObject> bl)
     {
@@ -33,6 +34,7 @@ public class Population {
         nHidden = gm.nHidden;
         nLayers = gm.nLayers;
         parentPoolSize = gm.parentPoolSize;
+        hm = gm.hm;
     }
 
     public List<NeuralNetwork> Generate()
@@ -81,21 +83,38 @@ public class Population {
     /*
      * This version uses genetic material from two parents to create a new child. 
      */
-    
-     
-     NeuralNetwork GenerateChild()
+
+
+    NeuralNetwork GenerateChild()
     {
-        /* WITHOUT PARENTPOOL
-         * NeuralNetwork parentA = SelectParent();
-         NeuralNetwork parentB = SelectParent();
-         */
-        NeuralNetwork parentA = SelectPoolParent();
+        NeuralNetwork child = new NeuralNetwork(nInput, nOutput, nHidden, nLayers);
+        switch (hm)
+        {
+            case HeritageMethod.weightProbability:
+                child = weightProbability();
+                break;
+            case HeritageMethod.twoParents:
+                child = twoParents();
+                break;
+        }
+        return child;
+
+    }
+
+    NeuralNetwork twoParents()
+    {
+        // WITHOUT PARENTPOOL
+        NeuralNetwork parentA = SelectParent();
+        NeuralNetwork parentB = SelectParent();
+
+        //WITH PARENT POOL
+        /* NeuralNetwork parentA = SelectPoolParent();
         NeuralNetwork parentB = SelectPoolParent();
         while (parentA == parentB)
         {
             parentB = SelectPoolParent();
         }
-        
+        */
         NeuralNetwork child = new NeuralNetwork(nInput, nOutput, nHidden, nLayers);
         float[] wA = parentA.GetWeights();
         float[] wB = parentB.GetWeights();
@@ -103,7 +122,7 @@ public class Population {
         float keepPercentage = 0.5f;
         for (int i = 0; i < wA.Length; i++)
         {
-            if(Random.Range(0f,1f) < keepPercentage)
+            if (Random.Range(0f, 1f) < keepPercentage)
             {
                 wChild[i] = wA[i];
             }
@@ -115,20 +134,8 @@ public class Population {
         wChild = Mutate(wChild);
         child.SetWeights(wChild);
         return child;
-
     }
-    // FOR DEBUGGING
-    /*NeuralNetwork GenerateChild() //DEBUGGING 
-    {
-        NeuralNetwork parentA = SelectParent();
-        NeuralNetwork child = new NeuralNetwork(nInput, nOutput, nHidden, nLayers);
-        child.setWeights(botList[0].nn.GetWeights()); 
-        return child;
-
-    }*/
-
-    /*
-    NeuralNetwork GenerateChild()
+    NeuralNetwork weightProbability()
     {
         NeuralNetwork child = new NeuralNetwork(nInput, nOutput, nHidden, nLayers);
         float[] wChild = child.GetWeights();
@@ -139,11 +146,11 @@ public class Population {
             wChild[i] = wA[i];
         }
         wChild = Mutate(wChild);
-        child.setWeights(wChild);
+        child.SetWeights(wChild);
         return child;
 
     }
-    */
+    
 
     //SELECTING PARENT WITHOUT POOL;
     NeuralNetwork SelectParent()
@@ -166,6 +173,8 @@ public class Population {
         
         return parent;
     }
+
+    //PARENT FROM POOL
     NeuralNetwork SelectPoolParent()
     {
         float r = Random.Range(0f, 1f);
@@ -207,6 +216,8 @@ public class Population {
             enemyList[i].GetComponent<Bot>().selectionProb = botList[i].selectionProb;
         }
     }
+
+
     List<GameObject> CalculateProbabilities(List<GameObject> inList)
     {
         List<GameObject> ret = inList;
