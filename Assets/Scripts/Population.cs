@@ -7,8 +7,7 @@ public class Population {
     public List<GameObject> enemyList;
     public List<Bot> botList;
 
-
-    private List<Bot> parentPool;
+    private List<GameObject> parentPool;
     private GameManager gm;
     private int nInput;
     private int nOutput;
@@ -31,6 +30,7 @@ public class Population {
         nInput = gm.nInputs;
         nOutput = gm.nOutputs;
         nHidden = gm.nHidden;
+        parentPoolSize = gm.parentPoolSize;
     }
 
     public List<NeuralNetwork> Generate()
@@ -45,19 +45,17 @@ public class Population {
 
         List<NeuralNetwork> nextGeneration = new List<NeuralNetwork>();
 
-        CalculateProbabilities();
-
         botList.Sort((x, y) => y.score.CompareTo(x.score));
 
-
-        parentPool = new List<Bot>();
+        parentPool = new List<GameObject>();
         for (int j = 0; j < parentPoolSize; j++)
         {
-            parentPool.Add(botList[j]);
+            parentPool.Add(enemyList[j]);
         }
         parentPool = CalculateProbabilities(parentPool);
+        //CalculateProbabilities(); // Used without parentPool;
 
-       // Debug.Log(botList[0].score + ", " + botList[1].score + ", " + botList[2].score);
+        // Debug.Log(botList[0].score + ", " + botList[1].score + ", " + botList[2].score);
 
         int i;
         for (i = 0; i < savedPerGen; i++)
@@ -85,11 +83,15 @@ public class Population {
      
      NeuralNetwork GenerateChild()
     {
-        NeuralNetwork parentA = SelectParent();
-        NeuralNetwork parentB = SelectParent();
+        /* WITHOUT PARENTPOOL
+         * NeuralNetwork parentA = SelectParent();
+         NeuralNetwork parentB = SelectParent();
+         */
+        NeuralNetwork parentA = SelectPoolParent();
+        NeuralNetwork parentB = SelectPoolParent();
         while (parentA == parentB)
         {
-            parentB = SelectParent();
+            parentB = SelectPoolParent();
         }
         
         NeuralNetwork child = new NeuralNetwork(nInput,nOutput,nHidden);
@@ -140,6 +142,8 @@ public class Population {
 
     }
     */
+
+    //SELECTING PARENT WITHOUT POOL;
     NeuralNetwork SelectParent()
     {
         float r = Random.Range(0f, 1f);
@@ -158,6 +162,26 @@ public class Population {
             }
         }
         
+        return parent;
+    }
+    NeuralNetwork SelectPoolParent()
+    {
+        float r = Random.Range(0f, 1f);
+        NeuralNetwork parent = new NeuralNetwork(nInput, nOutput, nHidden);
+        foreach (GameObject go in parentPool)
+        {
+            Bot curBot = go.GetComponent<Bot>();
+            if (r - curBot.selectionProb < 0)
+            {
+                parent = curBot.nn;
+                break;
+            }
+            else
+            {
+                r -= curBot.selectionProb;
+            }
+        }
+
         return parent;
     }
 
@@ -181,17 +205,18 @@ public class Population {
             enemyList[i].GetComponent<Bot>().selectionProb = botList[i].selectionProb;
         }
     }
-    List<Bot> CalculateProbabilities(List<Bot> inList)
+    List<GameObject> CalculateProbabilities(List<GameObject> inList)
     {
-        List<Bot> ret = inList;
+        List<GameObject> ret = inList;
         float totalScore = 0;
-        foreach (Bot bot in inList)
+        foreach (GameObject bot in inList)
         {
-            totalScore += bot.score;
+            totalScore += bot.GetComponent<Bot>().score;
         }
+        Debug.Log(inList.Count);
         for (int i = 0; i < inList.Count; i++)
         {
-            inList[i].selectionProb = inList[i].score / totalScore;
+            inList[i].GetComponent<Bot>().selectionProb = inList[i].GetComponent<Bot>().score / totalScore;
             enemyList[i].GetComponent<Bot>().selectionProb = botList[i].selectionProb;
         }
         return ret;
