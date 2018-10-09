@@ -1,6 +1,6 @@
 WindowsStandalone
 PlayerPath?
-C:/Unity/Builds/AI Shooter/AI Shooter.exe
+C:/Unity/Builds/AI Shooter weightProb/AI Shooter.exe
 SceneListBegin?
 Assets/Scenes/StartingScene.unity
 SceneListEnd?

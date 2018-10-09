@@ -176,12 +176,12 @@ public class Bot : MonoBehaviour {
         nnInput = new float[numberOfInputs];
         for (int i = 0; i < numberOfInputs; i++)
 
-        nnInput[0] = transform.position.x / (2.35f*2) + 0.5f;
-        nnInput[1] = transform.position.y / (2.35f * 2) + 0.5f;
-        nnInput[2] = enemy.transform.position.x / (2.35f * 2) +0.5f;
-        nnInput[3] = enemy.transform.position.y / (2.35f * 2) +0.5f;
-        nnInput[4] = enemy.GetComponent<Rigidbody2D>().velocity.x/20 + 0.5f;
-        nnInput[5] = enemy.GetComponent<Rigidbody2D>().velocity.y/20 + 0.5f;
+        nnInput[0] = transform.position.x / (2.35f);
+        nnInput[1] = transform.position.y / (2.35f);
+        nnInput[2] = enemy.transform.position.x / (2.35f);
+        nnInput[3] = enemy.transform.position.y / (2.35f);
+        nnInput[4] = enemy.GetComponent<Rigidbody2D>().velocity.x / 10;
+        nnInput[5] = enemy.GetComponent<Rigidbody2D>().velocity.y / 10;
 
         //Debug.Log(enemy.GetComponent<Rigidbody2D>().velocity.x + " , " + enemy.GetComponent<Rigidbody2D>().velocity.y);
     }

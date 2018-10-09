@@ -63,9 +63,9 @@ MonoBehaviour:
   nOutputs: 2
   nLayers: 1
   nHidden: 04000000
-  hm: 0
+  hm: 1
   mutationRate: 0.01
-  specialsMutationRate: 0.01
+  specialsMutationRate: 0.1
   savedPerGen: 2
   specialsPerGen: 5
   parentPoolSize: 50
