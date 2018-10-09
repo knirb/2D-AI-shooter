@@ -7,13 +7,16 @@ public class Population {
     public List<GameObject> enemyList;
     public List<Bot> botList;
 
+
+    private List<Bot> parentPool;
     private GameManager gm;
     private int nInput;
     private int nOutput;
     private int nHidden;
     private float mutationRate = 0.02f;
     private int savedPerGen = 2;
-    private int specialsPerGen = 2; //Specials are heavily mutated children to introduce more variation in the gene samples.
+    private int specialsPerGen = 10; //Specials are heavily mutated children to introduce more variation in the gene samples.
+    private int parentPoolSize;
 
     public Population(List<GameObject> bl)
     {
@@ -39,13 +42,22 @@ public class Population {
          * Each score will give every bot a probability to be selected: selectionProb = score/totalScore;
          * 
          */
+
         List<NeuralNetwork> nextGeneration = new List<NeuralNetwork>();
 
         CalculateProbabilities();
 
-
         botList.Sort((x, y) => y.score.CompareTo(x.score));
-        Debug.Log(botList[0].score + ", " + botList[1].score + ", " + botList[2].score);
+
+
+        parentPool = new List<Bot>();
+        for (int j = 0; j < parentPoolSize; j++)
+        {
+            parentPool.Add(botList[j]);
+        }
+        parentPool = CalculateProbabilities(parentPool);
+
+       // Debug.Log(botList[0].score + ", " + botList[1].score + ", " + botList[2].score);
 
         int i;
         for (i = 0; i < savedPerGen; i++)
@@ -69,15 +81,14 @@ public class Population {
     /*
      * This version uses genetic material from two parents to create a new child. 
      */
-
-     /*  
+    
+     
      NeuralNetwork GenerateChild()
     {
         NeuralNetwork parentA = SelectParent();
         NeuralNetwork parentB = SelectParent();
         while (parentA == parentB)
         {
-            Debug.Log("Same Parents not allowed");
             parentB = SelectParent();
         }
         
@@ -101,7 +112,7 @@ public class Population {
         child.setWeights(wChild);
         return child;
 
-    }*/
+    }
     // FOR DEBUGGING
     /*NeuralNetwork GenerateChild() //DEBUGGING 
     {
@@ -112,7 +123,7 @@ public class Population {
 
     }*/
 
-    
+    /*
     NeuralNetwork GenerateChild()
     {
         NeuralNetwork child = new NeuralNetwork(nInput, nOutput, nHidden);
@@ -128,7 +139,7 @@ public class Population {
         return child;
 
     }
-
+    */
     NeuralNetwork SelectParent()
     {
         float r = Random.Range(0f, 1f);
@@ -151,9 +162,10 @@ public class Population {
     }
 
     NeuralNetwork GenerateSpecial()
-    { 
-        NeuralNetwork parent = SelectParent();
-        parent.setWeights(Mutate(parent.GetWeights(),mutationRate+0.2f));
+    {
+        NeuralNetwork parent = new NeuralNetwork(nInput, nOutput, nHidden);
+        parent.setWeights(botList[0].nn.GetWeights());
+        parent.setWeights(Mutate(parent.GetWeights(),mutationRate+0.1f));
         return parent;
     }
     void CalculateProbabilities()
@@ -169,7 +181,21 @@ public class Population {
             enemyList[i].GetComponent<Bot>().selectionProb = botList[i].selectionProb;
         }
     }
-
+    List<Bot> CalculateProbabilities(List<Bot> inList)
+    {
+        List<Bot> ret = inList;
+        float totalScore = 0;
+        foreach (Bot bot in inList)
+        {
+            totalScore += bot.score;
+        }
+        for (int i = 0; i < inList.Count; i++)
+        {
+            inList[i].selectionProb = inList[i].score / totalScore;
+            enemyList[i].GetComponent<Bot>().selectionProb = botList[i].selectionProb;
+        }
+        return ret;
+    }
 
     float[] Mutate(float[] inp)
     {
@@ -179,7 +205,7 @@ public class Population {
         {
             if (Random.Range(0f, 1f) < mutationRate)
             {
-                mutatedInp[i] = Random.Range(botList[0].nn.lowerWeightLimit, botList[0].nn.higherWeightLimit);
+                mutatedInp[i] += Random.Range(botList[0].nn.lowerWeightLimit, botList[0].nn.higherWeightLimit)/2;
             }
             else
                 mutatedInp[i] = inp[i];
@@ -195,7 +221,7 @@ public class Population {
         {
             if (Random.Range(0f, 1f) < mutRate)
             {
-                mutatedInp[i] = Random.Range(botList[0].nn.lowerWeightLimit, botList[0].nn.higherWeightLimit);
+                mutatedInp[i] += Random.Range(botList[0].nn.lowerWeightLimit, botList[0].nn.higherWeightLimit) / 2;
             }
             else
                 mutatedInp[i] = inp[i];

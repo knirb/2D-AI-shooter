@@ -7,29 +7,31 @@ public class Bot : MonoBehaviour {
     public GameObject bullet;
     public NeuralNetwork nn;
 
-    public int ammo;
-    public int numberOfInputs; //For NeuralNetwork
-    public int numberOfOutputs; // NN outputs;
-    public int numberOfHidden;
+    
     public float score; //Total score for this bot.
     public float scoreHitTarget;
-    public float fireRate; // Bullets per Second
-    public float timeSinceShot = 0; //Also used in fireRate;
+    private float timeSinceShot = 0; //Also used in fireRate;
     public bool done;
     [HideInInspector] public string ID;
     public float selectionProb;
 
+    private int ammo;
+    private int numberOfInputs; //For NeuralNetwork
+    private int numberOfOutputs; // NN outputs;
+    private int numberOfHidden;
     private Vector2 shotPosition; //NN will target a position
     private Vector2 playerPosition;
     private Vector2 shotDirection; //Normalized direction of shot.
     private bool canShoot = true; //Used to create a fireRate - not being able to fire each frame. 
     public int bulletsInAir = 0;
-    
+    private float fireRate; // Bullets per Second
     private float bulletSpeed;
     private float[] nnOutput; //saveSpace for outPut of NN
     private float[] nnInput; //SaveSpace for inputs going in to nn
     private GameObject enemy;
     private GameManager gm;
+    private Rigidbody2D rb;
+    private Movement_UpDown mud;
     
 
 
@@ -42,7 +44,10 @@ public class Bot : MonoBehaviour {
         numberOfHidden = gm.nHidden;
         ammo = gm.shotsPerRound;
         bulletSpeed = gm.bulletSpeed;
+        fireRate = gm.fireRate;
+        rb = GetComponent<Rigidbody2D>();
         bullet.GetComponent<Bullet>().movementSpeed = bulletSpeed;
+        mud = GetComponent<Movement_UpDown>();
         nn = new NeuralNetwork(numberOfInputs, numberOfOutputs, numberOfHidden); //Currently using non parametrized constructor.
          
         
@@ -66,6 +71,10 @@ public class Bot : MonoBehaviour {
         ammo = gm.shotsPerRound;
         done = false;
         timeSinceShot = 0;
+        rb.position = gm.startPositionBot;
+        mud.setVelocity(new Vector3(0 ,1 ,0 ) * gm.botMoveSpeed);
+
+        
     }
     //Checks if canShoot and acts accordingly.
     void TryShooting()
@@ -118,6 +127,7 @@ public class Bot : MonoBehaviour {
 
         GameObject inst = Instantiate(bullet, instatiatePosition, Quaternion.AngleAxis((180 / Mathf.PI) * shotAngle, new Vector3(0, 0, 1)));
         inst.GetComponent<Bullet>().shooter = gameObject;
+        inst.GetComponent<SpriteRenderer>().color = GetComponent<SpriteRenderer>().color;
         canShoot = false;
         ammo--;
         bulletsInAir++;
@@ -135,9 +145,11 @@ public class Bot : MonoBehaviour {
 
     }
 
+
+
     public void MissedTarget(float sqrdDist)
     {
-        score += (1 - sqrdDist/Mathf.Pow(5f-0.24f,2))*scoreHitTarget*0.1f;
+        score += (1 - sqrdDist/Mathf.Pow(5f-0.24f,2))*scoreHitTarget*0.02f;
         bulletsInAir--;
         if (bulletsInAir < 0)
             Debug.Break();
@@ -164,8 +176,10 @@ public class Bot : MonoBehaviour {
         nnInput[1] = transform.position.y / 2.35f;
         nnInput[2] = enemy.transform.position.x / 2.35f;
         nnInput[3] = enemy.transform.position.y / 2.35f;
-        nnInput[4] = enemy.GetComponent<Rigidbody2D>().velocity.x;
-        nnInput[5] = enemy.GetComponent<Rigidbody2D>().velocity.y;
+        nnInput[4] = enemy.GetComponent<Rigidbody2D>().velocity.x/10;
+        nnInput[5] = enemy.GetComponent<Rigidbody2D>().velocity.y/10;
+
+        //Debug.Log(enemy.GetComponent<Rigidbody2D>().velocity.x + " , " + enemy.GetComponent<Rigidbody2D>().velocity.y);
     }
 
     void ScaleOutputs()

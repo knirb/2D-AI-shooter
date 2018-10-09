@@ -12,7 +12,7 @@ public class GenerateObjectsEditor : Editor {
 
 		DrawDefaultInspector();
 
-		if (generated_objects) {
+		if (generated_objects) {    
 			
 			if(GUILayout.Button("Re-Generate Objects")) {
 

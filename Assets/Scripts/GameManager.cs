@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour {
     public int nInputs;
     public int nOutputs;
     public int nHidden;
+    public int parentPoolSize;
     public static GameManager instance = null;
     public GameObject bot;
     public GameObject background;
@@ -27,7 +28,9 @@ public class GameManager : MonoBehaviour {
     public float timeBetweenRounds;
     public float timeScale;
     public float playerMoveSpeed;
+    public float botMoveSpeed;
     public float bulletSpeed;
+    public float fireRate;
 
     private bool boardExists;
     private bool playing;
@@ -45,7 +48,10 @@ public class GameManager : MonoBehaviour {
         intermissionImage = GameObject.Find("IntermissionImage");
         curGen = 1;
         playerMoveSpeed *= timeScale;
+        botMoveSpeed *= timeScale;
         bulletSpeed *= timeScale;
+        fireRate *= timeScale;
+
 
     }
 
@@ -71,6 +77,7 @@ public class GameManager : MonoBehaviour {
         {
             GameObject inst = Instantiate(bot, startPositionBot, Quaternion.identity);
             inst.name = "Bot" + i.ToString(); //For Inspector
+            inst.GetComponent<Movement_UpDown>().setSpeed(botMoveSpeed);
             botList.Add(inst);
         }
         population = new Population(botList);
@@ -80,7 +87,7 @@ public class GameManager : MonoBehaviour {
     {
         enemy = Instantiate(enemyPrefab, startPositionEnemy, Quaternion.identity);
         enemy.name = "Enemy";
-        enemy.GetComponent<Movement_UpDown>().movementSpeed = playerMoveSpeed;
+        enemy.GetComponent<Movement_UpDown>().setSpeed(playerMoveSpeed);
     }
 
     public void BotDoneShooting(Bot sender) // Called through bots sending message that they are done shooting.
@@ -117,17 +124,19 @@ public class GameManager : MonoBehaviour {
         playing = true;
         botsDone = 0;
         intermissionImage.SetActive(false);
+        botList[0].GetComponent<SpriteRenderer>().color = Color.green;
+        botList[1].GetComponent<SpriteRenderer>().color = Color.blue;
 
-        
-        
+
 
         foreach (GameObject b in botList)
         {
             b.GetComponent<Bot>().RoundReset();
         }
         enemy.transform.position = startPositionEnemy;
-        enemy.GetComponent<Rigidbody2D>().velocity = new Vector3(0, 1, 0) * enemy.GetComponent<Movement_UpDown>().movementSpeed;
+        enemy.GetComponent<Movement_UpDown>().setVelocity(new Vector3(0, 1, 0) * playerMoveSpeed);
     }
+
 
    
 	// Update is called once per frame

@@ -5,7 +5,7 @@ using UnityEngine;
 public class Movement_UpDown : MonoBehaviour {
 
 
-    public float movementSpeed;
+    private float movementSpeed;
     private Rigidbody2D rb;
 	// Use this for initialization
 	void Start () {
@@ -19,5 +19,17 @@ public class Movement_UpDown : MonoBehaviour {
         {
             rb.velocity = -rb.velocity;
         }
+    }
+    public void setSpeed(float inp)
+    {
+        movementSpeed = inp;
+    }
+    public void setVelocity(Vector3 inp)
+    {
+        rb.velocity = inp;
+    }
+    public float getSpeed()
+    {
+        return movementSpeed;
     }
 }

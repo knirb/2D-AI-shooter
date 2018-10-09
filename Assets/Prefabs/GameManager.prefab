@@ -54,7 +54,7 @@ MonoBehaviour:
   numberOfPlayers: 50
   shotsPerRound: 10
   botsDone: 0
-  nInputs: 4
+  nInputs: 6
   nOutputs: 2
   nHidden: 5
   bot: {fileID: 1348553838564054, guid: d9e88c200a3277b4798cc72ac54a5547, type: 2}
@@ -64,7 +64,7 @@ MonoBehaviour:
   intermissionImage: {fileID: 0}
   startPositionBot: {x: -1.6, y: 0, z: 0}
   startPositionEnemy: {x: 1.6, y: 0, z: 0}
-  timeBetweenRounds: 0.5
-  timeScale: 3
+  timeBetweenRounds: 1
+  timeScale: 0.5
   playerMoveSpeed: 2
   bulletSpeed: 4
