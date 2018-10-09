@@ -18,7 +18,8 @@ public class Bot : MonoBehaviour {
     private int ammo;
     private int numberOfInputs; //For NeuralNetwork
     private int numberOfOutputs; // NN outputs;
-    private int numberOfHidden;
+    private int numberOfLayers;
+    private int[] numberOfHidden;
     private Vector2 shotPosition; //NN will target a position
     private Vector2 playerPosition;
     private Vector2 shotDirection; //Normalized direction of shot.
@@ -42,13 +43,14 @@ public class Bot : MonoBehaviour {
         numberOfInputs = gm.nInputs;
         numberOfOutputs = gm.nOutputs;
         numberOfHidden = gm.nHidden;
+        numberOfLayers = gm.nLayers;
         ammo = gm.shotsPerRound;
         bulletSpeed = gm.bulletSpeed;
         fireRate = gm.fireRate;
         rb = GetComponent<Rigidbody2D>();
         bullet.GetComponent<Bullet>().movementSpeed = bulletSpeed;
         mud = GetComponent<Movement_UpDown>();
-        nn = new NeuralNetwork(numberOfInputs, numberOfOutputs, numberOfHidden); //Currently using non parametrized constructor.
+        nn = new NeuralNetwork(numberOfInputs, numberOfOutputs, numberOfHidden, numberOfLayers); //Currently using non parametrized constructor.
          
         
         ID = gameObject.name;

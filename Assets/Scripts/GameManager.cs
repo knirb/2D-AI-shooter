@@ -15,7 +15,8 @@ public class GameManager : MonoBehaviour {
     public int botsDone;
     public int nInputs;
     public int nOutputs;
-    public int nHidden;
+    public int nLayers;
+    public int[] nHidden;
     public int parentPoolSize;
     public static GameManager instance = null;
     public GameObject bot;

@@ -11,7 +11,8 @@ public class Population {
     private GameManager gm;
     private int nInput;
     private int nOutput;
-    private int nHidden;
+    private int[] nHidden;
+    private int nLayers;
     private float mutationRate = 0.02f;
     private int savedPerGen = 2;
     private int specialsPerGen = 10; //Specials are heavily mutated children to introduce more variation in the gene samples.
@@ -30,6 +31,7 @@ public class Population {
         nInput = gm.nInputs;
         nOutput = gm.nOutputs;
         nHidden = gm.nHidden;
+        nLayers = gm.nLayers;
         parentPoolSize = gm.parentPoolSize;
     }
 
@@ -94,7 +96,7 @@ public class Population {
             parentB = SelectPoolParent();
         }
         
-        NeuralNetwork child = new NeuralNetwork(nInput,nOutput,nHidden);
+        NeuralNetwork child = new NeuralNetwork(nInput, nOutput, nHidden, nLayers);
         float[] wA = parentA.GetWeights();
         float[] wB = parentB.GetWeights();
         float[] wChild = new float[wA.Length];
@@ -111,7 +113,7 @@ public class Population {
             }
         }
         wChild = Mutate(wChild);
-        child.setWeights(wChild);
+        child.SetWeights(wChild);
         return child;
 
     }
@@ -119,7 +121,7 @@ public class Population {
     /*NeuralNetwork GenerateChild() //DEBUGGING 
     {
         NeuralNetwork parentA = SelectParent();
-        NeuralNetwork child = new NeuralNetwork(nInput, nOutput, nHidden);
+        NeuralNetwork child = new NeuralNetwork(nInput, nOutput, nHidden, nLayers);
         child.setWeights(botList[0].nn.GetWeights()); 
         return child;
 
@@ -128,7 +130,7 @@ public class Population {
     /*
     NeuralNetwork GenerateChild()
     {
-        NeuralNetwork child = new NeuralNetwork(nInput, nOutput, nHidden);
+        NeuralNetwork child = new NeuralNetwork(nInput, nOutput, nHidden, nLayers);
         float[] wChild = child.GetWeights();
         for (int i = 0; i < wChild.Length; i++)
         {
@@ -147,7 +149,7 @@ public class Population {
     NeuralNetwork SelectParent()
     {
         float r = Random.Range(0f, 1f);
-        NeuralNetwork parent = new NeuralNetwork(nInput,nOutput,nHidden);
+        NeuralNetwork parent = new NeuralNetwork(nInput, nOutput, nHidden, nLayers);
         foreach (GameObject go in enemyList)
         {
             Bot curBot = go.GetComponent<Bot>();
@@ -167,7 +169,7 @@ public class Population {
     NeuralNetwork SelectPoolParent()
     {
         float r = Random.Range(0f, 1f);
-        NeuralNetwork parent = new NeuralNetwork(nInput, nOutput, nHidden);
+        NeuralNetwork parent = new NeuralNetwork(nInput, nOutput, nHidden, nLayers);
         foreach (GameObject go in parentPool)
         {
             Bot curBot = go.GetComponent<Bot>();
@@ -187,9 +189,9 @@ public class Population {
 
     NeuralNetwork GenerateSpecial()
     {
-        NeuralNetwork parent = new NeuralNetwork(nInput, nOutput, nHidden);
-        parent.setWeights(botList[0].nn.GetWeights());
-        parent.setWeights(Mutate(parent.GetWeights(),mutationRate+0.1f));
+        NeuralNetwork parent = new NeuralNetwork(nInput, nOutput, nHidden, nLayers);
+        parent.SetWeights(botList[0].nn.GetWeights());
+        parent.SetWeights(Mutate(parent.GetWeights(),mutationRate+0.1f));
         return parent;
     }
     void CalculateProbabilities()
@@ -213,7 +215,6 @@ public class Population {
         {
             totalScore += bot.GetComponent<Bot>().score;
         }
-        Debug.Log(inList.Count);
         for (int i = 0; i < inList.Count; i++)
         {
             inList[i].GetComponent<Bot>().selectionProb = inList[i].GetComponent<Bot>().score / totalScore;
