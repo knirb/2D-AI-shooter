@@ -115,33 +115,6 @@ public class NeuralNetwork {
         wList.Add(GenerateWeights(hiddenSizes[nLayers - 1], nOutput));
     }
 
-
-    //Feeds input to the network, returns the output. 
-    /*public float[] CalculateOutput(float[] inp)
-    {
-        // multiply all inputs by w-weights for node 
-        //-> pass it to node function (trying Relu first)
-        //-> pass value on to output nodes, multiplying by v-weights
-        //-> pass through node function
-        //return output.
-        float[] input = new float[inp.Length + 1];
-        for (int i = 0; i < inp.Length; i++)
-            input[i] = inp[i];
-        input[nInput] = 1; //bias
-
-        hidden = new float[nHidden + 1];
-        float[] tempHidden = Vector.matVecMult(input, w); //To each hidden layer node we sum the values of all inputs*weight
-        tempHidden = Relu(tempHidden); // Passing values through activation func.
-        for (int i = 0; i < nHidden; i++)
-            hidden[i] = tempHidden[i];
-        hidden[nHidden] = 1;
-
-        output = Vector.matVecMult(hidden, v); //To each output layer node we sum the values of all hidden node values*weights
-        output = Softsign(output); // Maps values to between -1 and 1;
-
-        return output;
-    }*/
-
     public float[] CalculateOutput(float[] inp)
     {
         //PrintWeights();
@@ -168,52 +141,6 @@ public class NeuralNetwork {
         }
         return Softsign(nextOutVal);
     }
-
-    /*public float[] GetWeights()
-    {
-        int count = 0;
-        float[] ret = new float[(nInput+1)*nHidden + (nHidden+1)*nOutput];
-        for (int i = 0; i < nHidden; i++)
-        {
-            for (int j = 0; j < nInput+1; j++)
-            {
-                ret[count] = w[j, i];
-                count++;
-            }
-        }
-        for (int i = 0; i < nOutput; i++)
-        {
-            for (int j = 0; j < nHidden+1; j++)
-            {
-                ret[count] = v[j, i];
-                count++;
-            }
-        }
-        //Debug.Log("WeightsGet: " + ret[0] + ", " + ret[1] + ", " + ret[2]);
-        return ret;
-    }
-
-    public void SetWeights(float[] wIn)
-    {
-        int count = 0;
-        //Debug.Log("WeightsSet: " + wIn[0] + ", " + wIn[1] + ", " + wIn[2]);
-        for (int i = 0; i < nHidden; i++)
-        {
-            for (int j = 0; j < nInput + 1; j++)
-            {
-                w[j, i] = wIn[count];
-                count++;
-            }
-        }
-        for (int i = 0; i < nOutput; i++)
-        {
-            for (int j = 0; j < nHidden + 1; j++)
-            {
-                v[j, i] = wIn[count];
-                count++;
-            }
-        }
-    }*/
     public float[] GetWeights()
     {
         float[] ret = new float[totalNoWeights];

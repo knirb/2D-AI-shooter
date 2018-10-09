@@ -53,12 +53,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   numberOfPlayers: 50
   shotsPerRound: 10
-  botsDone: 0
+  timeScale: 2
+  timeBetweenRounds: 1
+  playerMoveSpeed: 2
+  botMoveSpeed: -2
+  bulletSpeed: 4
+  fireRate: 1
   nInputs: 6
   nOutputs: 2
   nLayers: 1
-  nHidden: 05000000
-  parentPoolSize: 10
+  nHidden: 04000000
+  hm: 0
+  mutationRate: 0.01
+  specialsMutationRate: 0.01
+  savedPerGen: 2
+  specialsPerGen: 5
+  parentPoolSize: 50
   bot: {fileID: 1348553838564054, guid: d9e88c200a3277b4798cc72ac54a5547, type: 2}
   background: {fileID: 1276779174057292, guid: d3e053a77bf6c4a44857e42ca45001d9, type: 2}
   enemyPrefab: {fileID: 1849532367665354, guid: 71a9410a1f0a02f46bd47c7458b89836,
@@ -66,9 +76,3 @@ MonoBehaviour:
   intermissionImage: {fileID: 0}
   startPositionBot: {x: -1.6, y: 0, z: 0}
   startPositionEnemy: {x: 1.6, y: 0, z: 0}
-  timeBetweenRounds: 1
-  timeScale: 2
-  playerMoveSpeed: 2
-  botMoveSpeed: -2
-  bulletSpeed: 4
-  fireRate: 1

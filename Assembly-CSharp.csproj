@@ -61,17 +61,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\RandomFromDistributions\Examples\DistributionsExamples\CurveTestScript.cs" />
-    <Compile Include="Assets\RandomFromDistributions\Examples\DistributionsExamples\CustomPDFTestScript.cs" />
-    <Compile Include="Assets\RandomFromDistributions\Examples\DistributionsExamples\DistributionTestScript.cs" />
-    <Compile Include="Assets\RandomFromDistributions\Examples\DistributionsExamples\ExponentialTestScript.cs" />
-    <Compile Include="Assets\RandomFromDistributions\Examples\DistributionsExamples\LinearTestScript.cs" />
-    <Compile Include="Assets\RandomFromDistributions\Examples\DistributionsExamples\NormalDistributionTestScript.cs" />
-    <Compile Include="Assets\RandomFromDistributions\Examples\GenerateObjects Example\GenerateObjects.cs" />
-    <Compile Include="Assets\RandomFromDistributions\Examples\GenerateObjects Example\GenerateObjectsEditor.cs" />
-    <Compile Include="Assets\RandomFromDistributions\Examples\Monster Spawner Example\Monster.cs" />
-    <Compile Include="Assets\RandomFromDistributions\Examples\Monster Spawner Example\MonsterSpawner.cs" />
-    <Compile Include="Assets\RandomFromDistributions\Scripts\RandomFromDistribution.cs" />
     <Compile Include="Assets\Scripts\Algorithms.cs" />
     <Compile Include="Assets\Scripts\Bot.cs" />
     <Compile Include="Assets\Scripts\Bullet.cs" />
@@ -83,8 +72,6 @@
     <Compile Include="Assets\Scripts\Player.cs" />
     <Compile Include="Assets\Scripts\Population.cs" />
     <Compile Include="Assets\Scripts\Vector.cs" />
-    <None Include="Assets\RandomFromDistributions\Examples\DistributionsExamples\DistributionsExamples README.txt" />
-    <None Include="Assets\RandomFromDistributions\Readme.txt" />
     <Reference Include="UnityEditor.StandardEvents">
       <HintPath>C:/Unity/AI Shooter/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
     </Reference>

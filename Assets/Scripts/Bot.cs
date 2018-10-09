@@ -23,7 +23,7 @@ public class Bot : MonoBehaviour {
     private Vector2 shotPosition; //NN will target a position
     private Vector2 playerPosition;
     private Vector2 shotDirection; //Normalized direction of shot.
-    private bool canShoot = true; //Used to create a fireRate - not being able to fire each frame. 
+    private bool canShoot = false; //Used to create a fireRate - not being able to fire each frame. 
     public int bulletsInAir = 0;
     private float fireRate; // Bullets per Second
     private float bulletSpeed;

@@ -206,7 +206,7 @@ public class Population {
     {
         NeuralNetwork parent = new NeuralNetwork(nInput, nOutput, nHidden, nLayers);
         parent.SetWeights(botList[0].nn.GetWeights());
-        parent.SetWeights(Mutate(parent.GetWeights(),1));
+        parent.SetWeights(Mutate(parent.GetWeights(),specialsMutationRate));
         return parent;
     }
     void CalculateProbabilities()
@@ -248,7 +248,7 @@ public class Population {
         {
             if (Random.Range(0f, 1f) < mutationRate)
             {
-                mutatedInp[i] = Random.Range(botList[0].nn.lowerWeightLimit, botList[0].nn.higherWeightLimit);
+                mutatedInp[i] += Random.Range(botList[0].nn.lowerWeightLimit, botList[0].nn.higherWeightLimit)/2;
             }
             else
                 mutatedInp[i] = inp[i];
@@ -264,7 +264,7 @@ public class Population {
         {
             if (Random.Range(0f, 1f) < mutRate)
             {
-                mutatedInp[i] = Random.Range(botList[0].nn.lowerWeightLimit, botList[0].nn.higherWeightLimit);
+                mutatedInp[i] += Random.Range(botList[0].nn.lowerWeightLimit, botList[0].nn.higherWeightLimit)/2;
             }
             else
                 mutatedInp[i] = inp[i];
