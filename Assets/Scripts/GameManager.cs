@@ -24,7 +24,11 @@ public class GameManager : MonoBehaviour {
     public int nOutputs;
     public int nLayers;
     public int[] nHidden;
-    public HeritageMethod hm;
+    public HeritageMethod hm; //Defined in Algorithms.cs
+    public float mutationRate;
+    public float specialsMutationRate;
+    public int savedPerGen;
+    public int specialsPerGen; //Specials are heavily mutated children to introduce more variation in the gene samples.
     public int parentPoolSize;
     public GameObject bot;
     public GameObject background;

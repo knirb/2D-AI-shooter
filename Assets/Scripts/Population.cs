@@ -13,9 +13,10 @@ public class Population {
     private int nOutput;
     private int[] nHidden;
     private int nLayers;
-    private float mutationRate = 0.02f;
-    private int savedPerGen = 2;
-    private int specialsPerGen = 10; //Specials are heavily mutated children to introduce more variation in the gene samples.
+    private float mutationRate;
+    private float specialsMutationRate;
+    private int savedPerGen;
+    private int specialsPerGen; //Specials are heavily mutated children to introduce more variation in the gene samples.
     private int parentPoolSize;
     private HeritageMethod hm;
 
@@ -35,7 +36,12 @@ public class Population {
         nLayers = gm.nLayers;
         parentPoolSize = gm.parentPoolSize;
         hm = gm.hm;
-    }
+        mutationRate = gm.mutationRate;
+        specialsMutationRate = gm.specialsMutationRate;
+        savedPerGen = gm.savedPerGen;
+        specialsPerGen = gm.specialsPerGen; //Specials are heavily mutated children to introduce more variation in the gene samples.
+
+}
 
     public List<NeuralNetwork> Generate()
     {
@@ -104,17 +110,17 @@ public class Population {
     NeuralNetwork twoParents()
     {
         // WITHOUT PARENTPOOL
-        NeuralNetwork parentA = SelectParent();
-        NeuralNetwork parentB = SelectParent();
+        //NeuralNetwork parentA = SelectParent();
+       // NeuralNetwork parentB = SelectParent();
 
         //WITH PARENT POOL
-        /* NeuralNetwork parentA = SelectPoolParent();
+        NeuralNetwork parentA = SelectPoolParent();
         NeuralNetwork parentB = SelectPoolParent();
         while (parentA == parentB)
         {
             parentB = SelectPoolParent();
         }
-        */
+        
         NeuralNetwork child = new NeuralNetwork(nInput, nOutput, nHidden, nLayers);
         float[] wA = parentA.GetWeights();
         float[] wB = parentB.GetWeights();
@@ -200,7 +206,7 @@ public class Population {
     {
         NeuralNetwork parent = new NeuralNetwork(nInput, nOutput, nHidden, nLayers);
         parent.SetWeights(botList[0].nn.GetWeights());
-        parent.SetWeights(Mutate(parent.GetWeights(),mutationRate+0.1f));
+        parent.SetWeights(Mutate(parent.GetWeights(),1));
         return parent;
     }
     void CalculateProbabilities()
@@ -242,7 +248,7 @@ public class Population {
         {
             if (Random.Range(0f, 1f) < mutationRate)
             {
-                mutatedInp[i] += Random.Range(botList[0].nn.lowerWeightLimit, botList[0].nn.higherWeightLimit)/2;
+                mutatedInp[i] = Random.Range(botList[0].nn.lowerWeightLimit, botList[0].nn.higherWeightLimit);
             }
             else
                 mutatedInp[i] = inp[i];
@@ -258,7 +264,7 @@ public class Population {
         {
             if (Random.Range(0f, 1f) < mutRate)
             {
-                mutatedInp[i] += Random.Range(botList[0].nn.lowerWeightLimit, botList[0].nn.higherWeightLimit) / 2;
+                mutatedInp[i] = Random.Range(botList[0].nn.lowerWeightLimit, botList[0].nn.higherWeightLimit);
             }
             else
                 mutatedInp[i] = inp[i];
