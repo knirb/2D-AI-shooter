@@ -63,12 +63,21 @@ public class Population {
 
     private void GenerateGenePool()
     {
-        parentPool = new List<GameObject>();
-        for (int j = 0; j < parentPoolSize; j++)
+        if (pp == ParentPool.yes)
         {
-            parentPool.Add(enemyList[j]);
+            Debug.Log("pp was yes...");
+            parentPool = new List<GameObject>();
+            for (int j = 0; j < parentPoolSize; j++)
+            {
+                parentPool.Add(enemyList[j]);
+            }
+            parentPool = CalculateProbabilities(parentPool);
         }
-        parentPool = CalculateProbabilities(parentPool);
+        else
+        {
+            CalculateProbabilities();
+        }
+        
     }
     private List<NeuralNetwork> GenerateNewGeneration()
     {
@@ -171,24 +180,31 @@ public class Population {
     //SELECTING PARENT WITHOUT POOL;
     private Bot SelectParent()
     {
+        Debug.Log("Selecting Parent");
         switch (pp)
         {
             case ParentPool.no:
+                Debug.Log("No parent pool");
                 return NoPool();
             case ParentPool.yes:
+                Debug.Log("parent pool");
                 return Pool();
-        }        
+        }
+        Debug.Log("No parent");
         return null;
     }
 
     private Bot NoPool()
     {
         float r = Random.Range(0f, 1f);
-        foreach (GameObject go in enemyList)
+        foreach (Bot curBot in botList)
         {
-            Bot curBot = go.GetComponent<Bot>();
+            
+            //Bot curBot = go.GetComponent<Bot>();
+            Debug.Log("Looking through bot: " + curBot.ID + " r = " + r);
             if (r - curBot.selectionProb < 0)
             {
+                Debug.Log("Returned a parent");
                 return curBot;
             }
             else
@@ -196,6 +212,7 @@ public class Population {
                 r -= curBot.selectionProb;
             }
         }
+        Debug.Log("Returned null!");
         return null;
     }
 
@@ -226,18 +243,25 @@ public class Population {
         parent.SetWeights(Mutate(parent.GetWeights(),specialsMutationRate,0.1f));
         return parent;
     }
+
     void CalculateProbabilities()
     {
         float totalScore = 0;
+        float probSum = 0; //ONLY DEBUG;
         foreach (Bot bot in botList)
         {
+            Debug.Log("totalScore= " + totalScore);
             totalScore += bot.score;
         }
+        Debug.Log("Total Score: " + totalScore);
         for(int i = 0; i <botList.Count; i++)
         {
+            Debug.Log(botList[i].ID + "prob: " + botList[i].score / totalScore);
             botList[i].selectionProb = botList[i].score / totalScore;
-            enemyList[i].GetComponent<Bot>().selectionProb = botList[i].selectionProb;
+            enemyList[i].GetComponent<Bot>().selectionProb = botList[i].score / totalScore;
+            probSum += enemyList[i].GetComponent<Bot>().selectionProb;
         }
+        Debug.Log("ProbSum = " + probSum);
     }
 
 
@@ -245,14 +269,23 @@ public class Population {
     {
         List<GameObject> ret = inList;
         float totalScore = 0;
+        Debug.Log("Calculated parentPoolprobs");
         foreach (GameObject bot in inList)
         {
             totalScore += bot.GetComponent<Bot>().score;
         }
-        for (int i = 0; i < inList.Count; i++)
+        for (int i = 0; i < botList.Count; i++)
         {
-            inList[i].GetComponent<Bot>().selectionProb = inList[i].GetComponent<Bot>().score / totalScore;
-            enemyList[i].GetComponent<Bot>().selectionProb = botList[i].selectionProb;
+            if (i < inList.Count)
+            {
+                inList[i].GetComponent<Bot>().selectionProb = inList[i].GetComponent<Bot>().score / totalScore;
+                enemyList[i].GetComponent<Bot>().selectionProb = inList[i].GetComponent<Bot>().selectionProb;
+            }
+            else
+            {
+                enemyList[i].GetComponent<Bot>().selectionProb = 0;
+            }
+            
         }
         return ret;
     }
