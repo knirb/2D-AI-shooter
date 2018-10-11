@@ -38,7 +38,6 @@ public class GameManager : MonoBehaviour {
     public Vector3 startPositionEnemy;
     public Population population;
 
-
     private int botsDone;
     private bool boardExists;
     private bool playing;
@@ -115,8 +114,6 @@ public class GameManager : MonoBehaviour {
 
         for (int i = 0; i < botList.Count; i++)
         {
-            //Debug.Log("Old Weights :" + botList[i].GetComponent<Bot>().nn.GetWeights()[0]);
-            //Debug.Log("New Weights :" + newNNs[i].GetWeights()[0]);
             botList[i].GetComponent<Bot>().nn = newNNs[i];
             botList[i].GetComponent<Bot>().score = 0;
         }

@@ -11,10 +11,8 @@ public class Bullet : MonoBehaviour {
     public float minDist;
     public float curDist;
     private GameObject enemy;
-    private bool hitSomething;
+    private bool hitSomething; //Used because it could hit multiple things causing counts in game manager to break.
 
-
-    // Use this for initialization
     void Start () {
         hitSomething = false;
         rb = GetComponent<Rigidbody2D>();
@@ -23,12 +21,10 @@ public class Bullet : MonoBehaviour {
         minDist = (enemy.transform.position - transform.position).sqrMagnitude;
     }
 	
-	// Update is called once per frame
 	void FixedUpdate() {
         curDist = (enemy.transform.position - transform.position).sqrMagnitude;
         if (curDist < minDist)
             minDist = curDist;
-        //transform.Translate(transform.right * movementSpeed * Time.deltaTime);
 	}
 
     private void OnTriggerEnter2D(Collider2D hitInfo)

@@ -51,8 +51,6 @@ public class Bot : MonoBehaviour {
         bullet.GetComponent<Bullet>().movementSpeed = bulletSpeed;
         mud = GetComponent<Movement_UpDown>();
         nn = new NeuralNetwork(numberOfInputs, numberOfOutputs, numberOfHidden, numberOfLayers); //Currently using non parametrized constructor.
-         
-        
         ID = gameObject.name;
         enemy = GameObject.Find("Enemy"); 
     }
@@ -88,19 +86,7 @@ public class Bot : MonoBehaviour {
             playerPosition = transform.position;
             GenerateInputs(); // Normalizes inputs to scale from 0-1;
             nnOutput = nn.CalculateOutput(nnInput);
-            ScaleOutputs();
             shotPosition = new Vector2(nnOutput[0], nnOutput[1]);
-
-            /*Debug.Log(ID + " I: " + nnInput[2] + ", " + nnInput[3]);
-            string ret = "";
-            for (int i = 0; i < nn.GetWeights().Length; i++)
-                ret += nn.GetWeights()[i] + ", ";
-            Debug.Log(ID + " O: " + nnOutput[0] + ", " + nnOutput[1]);
-            Debug.Log(ID + " W:" + ret);*/
-
-            /* shotDirection = (shotPosition - playerPosition).normalized; // used if targeting groundposition instead of shotangle;
-             * if (shotDirection == Vector2.zero)
-             */
 
             shotDirection = shotPosition.normalized;
             if (shotDirection == Vector2.zero)
@@ -149,11 +135,9 @@ public class Bot : MonoBehaviour {
 
     }
 
-
-
     public void MissedTarget(float sqrdDist)
     {
-        score += (1 - sqrdDist/Mathf.Pow(5f-0.24f,2))*scoreHitTarget*0.02f;
+        score += (1 - sqrdDist/Mathf.Pow(5f-0.24f,2))*scoreHitTarget;
         bulletsInAir--;
         if (bulletsInAir < 0)
             Debug.Break();
@@ -175,20 +159,16 @@ public class Bot : MonoBehaviour {
     {
         nnInput = new float[numberOfInputs];
         for (int i = 0; i < numberOfInputs; i++)
-
         nnInput[0] = transform.position.x / (2.35f);
         nnInput[1] = transform.position.y / (2.35f);
         nnInput[2] = enemy.transform.position.x / (2.35f);
         nnInput[3] = enemy.transform.position.y / (2.35f);
-        nnInput[4] = enemy.GetComponent<Rigidbody2D>().velocity.x / 10;
-        nnInput[5] = enemy.GetComponent<Rigidbody2D>().velocity.y / 10;
-
-        //Debug.Log(enemy.GetComponent<Rigidbody2D>().velocity.x + " , " + enemy.GetComponent<Rigidbody2D>().velocity.y);
-    }
-
-    void ScaleOutputs()
-    {
-        //nnOutput[0] *= 2.35f;
-        //nnOutput[1] *= 2.35f;
+        switch (numberOfInputs)
+            {
+                case 6:
+                    nnInput[4] = enemy.GetComponent<Rigidbody2D>().velocity.x / 10;
+                    nnInput[5] = enemy.GetComponent<Rigidbody2D>().velocity.y / 10;
+                    break;
+            }
     }
 }

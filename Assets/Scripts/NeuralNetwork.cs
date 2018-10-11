@@ -4,18 +4,8 @@ using UnityEngine;
 
 public class NeuralNetwork {
 
-
-    //Sizes
-    public int nInput = 4;
-    public int nOutput = 2;
-    public int nHidden = 3;
-
-
-
-    //Arrays for node values;
-    //private float[] input;
-    private float[] hidden;
-    private float[] output;
+    public int nInput;
+    public int nOutput;
 
     public float[,] w; //Weights inputLayer rows - nInput, columns - hidden 
     public float[,] v; //Weights hidden layer
@@ -23,7 +13,7 @@ public class NeuralNetwork {
     //Used for multiLayered networks;
     public int[] hiddenSizes;
     public List<float[,]> wm;
-    public int nLayers = 1;
+    public int nLayers;
     private int totalNoWeights;
 
     public float lowerWeightLimit = -1f;
@@ -35,33 +25,27 @@ public class NeuralNetwork {
     #region CONSTRUCTORS
     public NeuralNetwork() {
 
-        nInput = 4;
+        nInput = 6;
         nOutput = 2;
-        nHidden = 3;
-        GenerateWeights(nInput, nHidden, out w);
-        GenerateWeights(nHidden, nOutput, out v);
+        hiddenSizes = new int[1];
+        hiddenSizes[0] = 5;
+        nLayers = 1;
+
+        GenerateWeights(out wm);
 
     }
 
-    public NeuralNetwork(int nIn, int nOut)
-    {
-
-        GenerateWeights(nInput, nHidden, out w);
-        GenerateWeights(nHidden, nOutput, out v);
-
-        nInput = nIn;
-        nOutput = nOut;
-
-    }
     public NeuralNetwork(int nIn, int nOut, int nHid)
     {
         nInput = nIn;
         nOutput = nOut;
-        nHidden = nHid;
+        hiddenSizes = new int[1];
+        hiddenSizes[0] = nHid;
+        nLayers = 1;
 
-        GenerateWeights(nInput, nHidden, out w);
-        GenerateWeights(nHidden, nOutput, out v);
+        GenerateWeights(out wm);
     }
+
     public NeuralNetwork(int nIn, int nOut, int[] nHid, int nLay)
     {
         nInput = nIn;
@@ -72,22 +56,23 @@ public class NeuralNetwork {
 
         GenerateWeights(out wm);
     }
+
     #endregion
 
-    //Generating random weights
-    void GenerateWeights(int rows, int columns, out float[,] weights)
+    void GenerateWeights(out List<float[,]> wList)
     {
-        weights = new float[rows + 1, columns];
-        for (int i = 0; i < rows + 1; i++)
+        wList = new List<float[,]>();
+
+
+        wList.Add(GenerateWeights(nInput, hiddenSizes[0]));
+        for (int i = 1; i < nLayers; i++)
         {
-            for (int j = 0; j < columns; j++)
-            {
-                weights[i, j] = Random.Range(lowerWeightLimit, higherWeightLimit);
-                totalNoWeights++;
-            }
+            wList.Add(GenerateWeights(hiddenSizes[i - 1], hiddenSizes[i]));
         }
 
+        wList.Add(GenerateWeights(hiddenSizes[nLayers - 1], nOutput));
     }
+
     private float[,] GenerateWeights(int rows, int columns)
     {
         float[,] weights = new float[rows + 1, columns];
@@ -101,23 +86,10 @@ public class NeuralNetwork {
         }
         return weights;
     }
-    void GenerateWeights(out List<float[,]> wList)
-    {
-        wList = new List<float[,]>();
-
-        
-        wList.Add(GenerateWeights(nInput, hiddenSizes[0]));
-        for (int i = 1; i < nLayers; i++)
-        {
-            wList.Add(GenerateWeights(hiddenSizes[i - 1], hiddenSizes[i]));
-        }
-
-        wList.Add(GenerateWeights(hiddenSizes[nLayers - 1], nOutput));
-    }
+    
 
     public float[] CalculateOutput(float[] inp)
     {
-        //PrintWeights();
         float[] nextOutVal = new float[0];
         int count=0;
         foreach (float[,] wi in wm)
@@ -139,8 +111,10 @@ public class NeuralNetwork {
             inp = nextOutVal;
             
         }
-        return Softsign(nextOutVal);
+        return Softsign(nextOutVal); //NORMAL SOFTSIGN MODE
+        //return nextOutVal; //FOR TESTING WITHOUT SOFTSIGN;
     }
+
     public float[] GetWeights()
     {
         float[] ret = new float[totalNoWeights];
@@ -162,6 +136,7 @@ public class NeuralNetwork {
         }
         return ret;
     }
+
     public void SetWeights(float[] inp)
     {
         int count = 0;
@@ -182,25 +157,6 @@ public class NeuralNetwork {
         }
     }
 
-    public void PrintWeights()
-    {
-        
-        foreach(float[,] wi in wm)
-        {
-            string printString = "";
-            int rows = wi.GetLength(0);
-            int  columns = wi.GetLength(1);
-            for (int i = 0; i <columns; i++)
-            {
-                for (int j = 0; j<rows;j++)
-                {
-                    printString += wi[j, i] + " ";
-                }
-                printString += "\n";
-            }
-            Debug.Log(printString);
-        }
-    }
     #region Activation Functions
 
     public float[] Relu(float[] inp) // RELU(x) returns close to zero if x is less than zero, otherwhise x.
