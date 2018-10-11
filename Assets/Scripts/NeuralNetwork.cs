@@ -7,9 +7,6 @@ public class NeuralNetwork {
     public int nInput;
     public int nOutput;
 
-    public float[,] w; //Weights inputLayer rows - nInput, columns - hidden 
-    public float[,] v; //Weights hidden layer
-
     //Used for multiLayered networks;
     public int[] hiddenSizes;
     public List<float[,]> wm;

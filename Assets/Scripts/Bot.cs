@@ -87,7 +87,6 @@ public class Bot : MonoBehaviour {
             GenerateInputs(); // Normalizes inputs to scale from 0-1;
             nnOutput = nn.CalculateOutput(nnInput);
             shotPosition = new Vector2(nnOutput[0], nnOutput[1]);
-
             shotDirection = shotPosition.normalized;
             if (shotDirection == Vector2.zero)
             {
@@ -137,7 +136,7 @@ public class Bot : MonoBehaviour {
 
     public void MissedTarget(float sqrdDist)
     {
-        score += (1 - sqrdDist/Mathf.Pow(5f-0.24f,2))*scoreHitTarget;
+        score += (1 - Mathf.Sqrt(sqrdDist)/Mathf.Pow(5f-0.24f,1))*scoreHitTarget;
         bulletsInAir--;
         if (bulletsInAir < 0)
             Debug.Break();
@@ -168,6 +167,11 @@ public class Bot : MonoBehaviour {
                 case 6:
                     nnInput[4] = enemy.GetComponent<Rigidbody2D>().velocity.x / 10;
                     nnInput[5] = enemy.GetComponent<Rigidbody2D>().velocity.y / 10;
+                    break;
+                case 7:
+                    nnInput[4] = enemy.GetComponent<Rigidbody2D>().velocity.x / 10;
+                    nnInput[5] = enemy.GetComponent<Rigidbody2D>().velocity.y / 10;
+                    nnInput[6] = (2.35f - enemy.GetComponent<Rigidbody2D>().transform.position.y)/4.7f;
                     break;
             }
     }
