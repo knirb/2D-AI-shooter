@@ -103,7 +103,7 @@ public class Population {
                 child = twoParents();
                 break;
             case HeritageMethod.scoreBasedMutation:
-                child = scoreBasedMutation();
+                child = ScoreBasedMutation();
                 break;
         }
         return child;
@@ -116,7 +116,7 @@ public class Population {
     {
         Bot parentA = SelectParent();
         Bot parentB = SelectParent();
-        while (parentA == parentB)
+        while (parentA.nn == parentB.nn)
         {
             parentB = SelectParent();
         }
