@@ -33,9 +33,6 @@ public class Bot : MonoBehaviour {
     private GameManager gm;
     private Rigidbody2D rb;
     private Movement_UpDown mud;
-    
-
-
 
     void Start()
     {

@@ -48,9 +48,6 @@ public class Population {
 
         CalculateFitness();
         GenerateGenePool();
-
-        GenerateNewGeneration();
-
         List<NeuralNetwork> nextGeneration = GenerateNewGeneration();
 
         return nextGeneration;
@@ -92,34 +89,39 @@ public class Population {
         return newGen;
     }
 
-    NeuralNetwork GenerateChildNN()
+    private NeuralNetwork GenerateChildNN()
     {
         NeuralNetwork child = new NeuralNetwork(nInput, nOutput, nHidden, nLayers);
         switch (hm)
         {
             case HeritageMethod.weightProbability:
-                child = weightProbability();
+                child = WeightProbability();
                 break;
             case HeritageMethod.twoParents:
                 child = twoParents();
+                break;
+            case HeritageMethod.scoreBasedMutation:
+                child = scoreBasedMutation();
                 break;
         }
         return child;
 
     }
 
-    NeuralNetwork twoParents() //Crossover Alternative
+    #region Heritage Methods
+
+    private NeuralNetwork twoParents() //Crossover Alternative
     {
-        NeuralNetwork parentA = SelectPoolParent();
-        NeuralNetwork parentB = SelectPoolParent();
+        Bot parentA = SelectPoolParent();
+        Bot parentB = SelectPoolParent();
         while (parentA == parentB)
         {
             parentB = SelectPoolParent();
         }
         
         NeuralNetwork child = new NeuralNetwork(nInput, nOutput, nHidden, nLayers);
-        float[] wA = parentA.GetWeights();
-        float[] wB = parentB.GetWeights();
+        float[] wA = parentA.nn.GetWeights();
+        float[] wB = parentB.nn.GetWeights();
         float[] wChild = new float[wA.Length];
         int cutPoint = Random.Range(0, wA.Length - 1);
         for (int i = 0; i < wA.Length; i++)
@@ -137,13 +139,13 @@ public class Population {
         child.SetWeights(wChild);
         return child;
     }
-    NeuralNetwork weightProbability() //Crossover alternative
+    private NeuralNetwork WeightProbability() //Crossover alternative
     {
         NeuralNetwork child = new NeuralNetwork(nInput, nOutput, nHidden, nLayers);
         float[] wChild = child.GetWeights();
         for (int i = 0; i < wChild.Length; i++)
         {
-            NeuralNetwork nn = SelectParent();
+            NeuralNetwork nn = SelectParent().nn;
             float[] wA = nn.GetWeights();
             wChild[i] = wA[i];
         }
@@ -152,18 +154,22 @@ public class Population {
         return child;
 
     }
-    
+    private NeuralNetwork ScoreBasedMutation()
+    {
+        
+        
+    }
+    #endregion
     //SELECTING PARENT WITHOUT POOL;
-    NeuralNetwork SelectParent()
+    private Bot SelectParent()
     {
         float r = Random.Range(0f, 1f);
-        NeuralNetwork parent = new NeuralNetwork(nInput, nOutput, nHidden, nLayers);
         foreach (GameObject go in enemyList)
         {
             Bot curBot = go.GetComponent<Bot>();
             if (r-curBot.selectionProb < 0)
             {
-                parent = curBot.nn;
+                return curBot;
                 break;
             }
             else
@@ -172,21 +178,19 @@ public class Population {
             }
         }
         
-        return parent;
+        return null;
     }
 
     //PARENT FROM POOL
-    NeuralNetwork SelectPoolParent()
+    private Bot SelectPoolParent()
     {
         float r = Random.Range(0f, 1f);
-        NeuralNetwork parent = new NeuralNetwork(nInput, nOutput, nHidden, nLayers);
         foreach (GameObject go in parentPool)
         {
             Bot curBot = go.GetComponent<Bot>();
             if (r - curBot.selectionProb < 0)
             {
-                parent = curBot.nn;
-                break;
+                return curBot;
             }
             else
             {
@@ -194,14 +198,14 @@ public class Population {
             }
         }
 
-        return parent;
+        return null;
     }
 
-    NeuralNetwork GenerateSpecial()
+    private NeuralNetwork GenerateSpecial()
     {
         NeuralNetwork parent = new NeuralNetwork(nInput, nOutput, nHidden, nLayers);
         parent.SetWeights(botList[0].nn.GetWeights());
-        parent.SetWeights(Mutate(parent.GetWeights(),specialsMutationRate));
+        parent.SetWeights(Mutate(parent.GetWeights(),specialsMutationRate,0.1f));
         return parent;
     }
     void CalculateProbabilities()
@@ -219,7 +223,7 @@ public class Population {
     }
 
 
-    List<GameObject> CalculateProbabilities(List<GameObject> inList)
+    private List<GameObject> CalculateProbabilities(List<GameObject> inList)
     {
         List<GameObject> ret = inList;
         float totalScore = 0;
@@ -235,7 +239,7 @@ public class Population {
         return ret;
     }
 
-    void Mutate(ref float[] inp)
+    private void Mutate(ref float[] inp)
     {
 
         for (int i = 0; i<inp.Length; i++)
@@ -247,7 +251,7 @@ public class Population {
         }
         
     }
-    float[] Mutate(float[] inp, float mutRate)
+    private float[] Mutate(float[] inp, float mutRate, float mutScale)
     {
         float[] mutatedInp = new float[inp.Length];
 
@@ -255,7 +259,7 @@ public class Population {
         {
             if (Random.Range(0f, 1f) < mutRate)
             {
-                mutatedInp[i] += Random.Range(botList[0].nn.lowerWeightLimit, botList[0].nn.higherWeightLimit)/10;
+                mutatedInp[i] += Random.Range(botList[0].nn.lowerWeightLimit, botList[0].nn.higherWeightLimit)*mutScale;
             }
             else
                 mutatedInp[i] = inp[i];

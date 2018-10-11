@@ -1,1 +1,1 @@
-﻿public enum HeritageMethod{twoParents, weightProbability};
+﻿public enum HeritageMethod{twoParents, weightProbability, scoreBasedMutation};
