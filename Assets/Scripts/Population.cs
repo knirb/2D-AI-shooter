@@ -19,6 +19,7 @@ public class Population {
     private int specialsPerGen; //Specials are heavily mutated children to introduce more variation in the gene samples.
     private int parentPoolSize;
     private HeritageMethod hm;
+    private ParentPool pp;
 
     public Population(List<GameObject> bl)
     {
@@ -36,6 +37,7 @@ public class Population {
         nLayers = gm.nLayers;
         parentPoolSize = (gm.parentPoolSize < gm.numberOfPlayers) ? gm.parentPoolSize : gm.numberOfPlayers;
         hm = gm.hm;
+        pp = gm.pp;
         mutationRate = gm.mutationRate;
         specialsMutationRate = gm.specialsMutationRate;
         savedPerGen = gm.savedPerGen;
@@ -112,11 +114,11 @@ public class Population {
 
     private NeuralNetwork twoParents() //Crossover Alternative
     {
-        Bot parentA = SelectPoolParent();
-        Bot parentB = SelectPoolParent();
+        Bot parentA = SelectParent();
+        Bot parentB = SelectParent();
         while (parentA == parentB)
         {
-            parentB = SelectPoolParent();
+            parentB = SelectParent();
         }
         
         NeuralNetwork child = new NeuralNetwork(nInput, nOutput, nHidden, nLayers);
@@ -156,33 +158,49 @@ public class Population {
     }
     private NeuralNetwork ScoreBasedMutation()
     {
-        
-        
+        NeuralNetwork child = new NeuralNetwork(nInput, nOutput, nHidden, nLayers);
+        Bot parent = SelectParent();
+        float[] wParent = parent.nn.GetWeights();
+        float score = parent.score;
+        float mutRate = (gm.maxScore - score)/gm.maxScore;
+        float mutScale = mutRate;
+        child.SetWeights(Mutate(wParent, mutRate, mutScale));
+        return child;
     }
     #endregion
     //SELECTING PARENT WITHOUT POOL;
     private Bot SelectParent()
     {
+        switch (pp)
+        {
+            case ParentPool.no:
+                return NoPool();
+            case ParentPool.yes:
+                return Pool();
+        }        
+        return null;
+    }
+
+    private Bot NoPool()
+    {
         float r = Random.Range(0f, 1f);
         foreach (GameObject go in enemyList)
         {
             Bot curBot = go.GetComponent<Bot>();
-            if (r-curBot.selectionProb < 0)
+            if (r - curBot.selectionProb < 0)
             {
                 return curBot;
-                break;
             }
             else
             {
                 r -= curBot.selectionProb;
             }
         }
-        
         return null;
     }
 
     //PARENT FROM POOL
-    private Bot SelectPoolParent()
+    private Bot Pool()
     {
         float r = Random.Range(0f, 1f);
         foreach (GameObject go in parentPool)

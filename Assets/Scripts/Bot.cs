@@ -9,12 +9,13 @@ public class Bot : MonoBehaviour {
 
     
     public float score; //Total score for this bot.
-    public float scoreHitTarget;
+    
     private float timeSinceShot = 0; //Also used in fireRate;
     public bool done;
     [HideInInspector] public string ID;
     public float selectionProb;
 
+    private float scoreHitTarget;
     private int ammo;
     private int numberOfInputs; //For NeuralNetwork
     private int numberOfOutputs; // NN outputs;
@@ -49,7 +50,8 @@ public class Bot : MonoBehaviour {
         mud = GetComponent<Movement_UpDown>();
         nn = new NeuralNetwork(numberOfInputs, numberOfOutputs, numberOfHidden, numberOfLayers); //Currently using non parametrized constructor.
         ID = gameObject.name;
-        enemy = GameObject.Find("Enemy"); 
+        enemy = GameObject.Find("Enemy");
+        scoreHitTarget = gm.hitScore;
     }
 
 

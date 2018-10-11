@@ -19,16 +19,18 @@ public class GameManager : MonoBehaviour {
     public float botMoveSpeed;
     public float bulletSpeed;
     public float fireRate;
-    
+    public float hitScore;
+    [HideInInspector] public float maxScore;
     public int nInputs;
     public int nOutputs;
     public int nLayers;
     public int[] nHidden;
     public HeritageMethod hm; //Defined in Algorithms.cs
+    public ParentPool pp;
     public float mutationRate;
     public float specialsMutationRate;
     public int savedPerGen;
-    //public int specialsPerGen; //Specials are heavily mutated children to introduce more variation in the gene samples.
+    public int specialsPerGen; //Specials are heavily mutated children to introduce more variation in the gene samples.
     public int parentPoolSize;
     public GameObject bot;
     public GameObject background;
@@ -58,7 +60,7 @@ public class GameManager : MonoBehaviour {
         botMoveSpeed *= timeScale;
         bulletSpeed *= timeScale;
         fireRate *= timeScale;
-
+        maxScore = shotsPerRound * hitScore;
 
     }
 
@@ -78,6 +80,7 @@ public class GameManager : MonoBehaviour {
         CreateBots();
         boardExists = true;
     }
+
     private void CreateBots()
     {
         for (int i = 0; i < numberOfPlayers; i++)
