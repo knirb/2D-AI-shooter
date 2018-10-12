@@ -59,13 +59,14 @@ public class Population {
     private void CalculateFitness() //Sorts bots in order of fitness/score
     {
         botList.Sort((x, y) => y.score.CompareTo(x.score));
+        botList.Sort((x, y) => y.score.CompareTo(x.score));
+        
     }
 
     private void GenerateGenePool()
     {
         if (pp == ParentPool.yes)
         {
-            Debug.Log("pp was yes...");
             parentPool = new List<GameObject>();
             for (int j = 0; j < parentPoolSize; j++)
             {
@@ -180,17 +181,13 @@ public class Population {
     //SELECTING PARENT WITHOUT POOL;
     private Bot SelectParent()
     {
-        Debug.Log("Selecting Parent");
         switch (pp)
         {
             case ParentPool.no:
-                Debug.Log("No parent pool");
                 return NoPool();
             case ParentPool.yes:
-                Debug.Log("parent pool");
                 return Pool();
         }
-        Debug.Log("No parent");
         return null;
     }
 
@@ -199,12 +196,8 @@ public class Population {
         float r = Random.Range(0f, 1f);
         foreach (Bot curBot in botList)
         {
-            
-            //Bot curBot = go.GetComponent<Bot>();
-            Debug.Log("Looking through bot: " + curBot.ID + " r = " + r);
             if (r - curBot.selectionProb < 0)
             {
-                Debug.Log("Returned a parent");
                 return curBot;
             }
             else
@@ -212,7 +205,6 @@ public class Population {
                 r -= curBot.selectionProb;
             }
         }
-        Debug.Log("Returned null!");
         return null;
     }
 
@@ -250,18 +242,13 @@ public class Population {
         float probSum = 0; //ONLY DEBUG;
         foreach (Bot bot in botList)
         {
-            Debug.Log("totalScore= " + totalScore);
             totalScore += bot.score;
         }
-        Debug.Log("Total Score: " + totalScore);
         for(int i = 0; i <botList.Count; i++)
         {
-            Debug.Log(botList[i].ID + "prob: " + botList[i].score / totalScore);
             botList[i].selectionProb = botList[i].score / totalScore;
-            enemyList[i].GetComponent<Bot>().selectionProb = botList[i].score / totalScore;
             probSum += enemyList[i].GetComponent<Bot>().selectionProb;
         }
-        Debug.Log("ProbSum = " + probSum);
     }
 
 
@@ -269,7 +256,6 @@ public class Population {
     {
         List<GameObject> ret = inList;
         float totalScore = 0;
-        Debug.Log("Calculated parentPoolprobs");
         foreach (GameObject bot in inList)
         {
             totalScore += bot.GetComponent<Bot>().score;

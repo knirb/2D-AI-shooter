@@ -59,11 +59,14 @@ MonoBehaviour:
   botMoveSpeed: -2
   bulletSpeed: 4
   fireRate: 1
+  hitScore: 10
+  maxScore: 0
   nInputs: 7
   nOutputs: 2
   nLayers: 1
   nHidden: 05000000
-  hm: 0
+  hm: 2
+  pp: 1
   mutationRate: 0.01
   specialsMutationRate: 0.1
   savedPerGen: 2
