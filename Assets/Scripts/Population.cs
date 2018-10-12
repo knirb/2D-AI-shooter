@@ -174,6 +174,7 @@ public class Population {
         float score = parent.score;
         float mutRate = (gm.maxScore - score)/gm.maxScore;
         float mutScale = mutRate;
+        //Debug.Log("Mutrate: " + mutRate + ", Mutscale: " + mutScale);
         child.SetWeights(Mutate(wParent, mutRate, mutScale));
         return child;
     }
@@ -290,19 +291,14 @@ public class Population {
     }
     private float[] Mutate(float[] inp, float mutRate, float mutScale)
     {
-        float[] mutatedInp = new float[inp.Length];
-
         for (int i = 0; i < inp.Length; i++)
         {
             if (Random.Range(0f, 1f) < mutRate)
             {
-                mutatedInp[i] += Random.Range(botList[0].nn.lowerWeightLimit, botList[0].nn.higherWeightLimit)*mutScale;
+                inp[i] += Random.Range(botList[0].nn.lowerWeightLimit, botList[0].nn.higherWeightLimit)*mutScale;
             }
-            else
-                mutatedInp[i] = inp[i];
         }
-
-        return mutatedInp;
+        return inp;
     }
 
 

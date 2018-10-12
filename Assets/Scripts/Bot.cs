@@ -14,6 +14,7 @@ public class Bot : MonoBehaviour {
     public bool done;
     [HideInInspector] public string ID;
     public float selectionProb;
+    public colorScheme cs;
 
     private float scoreHitTarget;
     private int ammo;
@@ -34,9 +35,12 @@ public class Bot : MonoBehaviour {
     private GameManager gm;
     private Rigidbody2D rb;
     private Movement_UpDown mud;
+    private SpriteRenderer sr;
+    private Color baseColor;
 
     void Start()
     {
+        
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
         numberOfInputs = gm.nInputs;
         numberOfOutputs = gm.nOutputs;
@@ -48,6 +52,9 @@ public class Bot : MonoBehaviour {
         rb = GetComponent<Rigidbody2D>();
         bullet.GetComponent<Bullet>().movementSpeed = bulletSpeed;
         mud = GetComponent<Movement_UpDown>();
+        sr = GetComponent<SpriteRenderer>();
+        baseColor = sr.color;
+        cs = colorScheme.baseColor;
         nn = new NeuralNetwork(numberOfInputs, numberOfOutputs, numberOfHidden, numberOfLayers); //Currently using non parametrized constructor.
         ID = gameObject.name;
         enemy = GameObject.Find("Enemy");
@@ -115,7 +122,7 @@ public class Bot : MonoBehaviour {
 
         GameObject inst = Instantiate(bullet, instatiatePosition, Quaternion.AngleAxis((180 / Mathf.PI) * shotAngle, new Vector3(0, 0, 1)));
         inst.GetComponent<Bullet>().shooter = gameObject;
-        inst.GetComponent<SpriteRenderer>().color = GetComponent<SpriteRenderer>().color;
+        inst.GetComponent<SpriteRenderer>().color = sr.color;
         canShoot = false;
         ammo--;
         bulletsInAir++;
@@ -142,13 +149,47 @@ public class Bot : MonoBehaviour {
 
     }
 
-    void CheckIfDone()
+    private void CheckIfDone()
     {
         //Debug.Log("CheckedIfDone, amm: " + ammo + ", bulletsInAir: " + bulletsInAir);
         if (ammo <= 0 && bulletsInAir == 0)
         {
             done = true;
             gm.BotDoneShooting(this);
+        }
+    }
+
+    public void ToggleColor()
+    {
+        switch (cs)
+        {
+            case colorScheme.baseColor:
+                sr.color = Color.clear;
+                cs = colorScheme.clear;
+                break;
+            case colorScheme.clear:
+                sr.color = baseColor;
+                cs = colorScheme.baseColor;
+                break;
+        }
+    }
+
+    public void SetColor(colorScheme inC)
+    {
+        switch (inC)
+        {
+            case colorScheme.green:
+                sr.color = Color.green;
+                cs = colorScheme.green;
+                break;
+            case colorScheme.clear:
+                sr.color = Color.clear;
+                cs = colorScheme.clear;
+                break;
+            case colorScheme.baseColor:
+                sr.color = baseColor;
+                cs = colorScheme.baseColor;
+                break;
         }
     }
 

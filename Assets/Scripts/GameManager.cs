@@ -63,7 +63,26 @@ public class GameManager : MonoBehaviour {
         maxScore = shotsPerRound * hitScore;
 
     }
+    void Update()
+    {
+        if (Input.GetKeyDown("space"))
+        {
+            ToggleShownBots();
+        }
+    }
+    void FixedUpdate () {
 
+        if (!boardExists && Time.time >= timeBetweenRounds)
+            initGame();
+
+        else if (!playing && Time.time >= timeNextRound && boardExists)
+        {
+            NewRound();
+        }
+        
+
+
+    }
     private void initGame()
     {
         playing = true;
@@ -127,15 +146,20 @@ public class GameManager : MonoBehaviour {
         playing = false;
     }
 
+    private void ToggleShownBots()
+    {
+        for (int i = 1; i <botList.Count;i++)
+        {
+            botList[i].GetComponent<Bot>().ToggleColor();
+        }
+    }
+
     private void NewRound()
     {
         playing = true;
         botsDone = 0;
         intermissionImage.SetActive(false);
-        botList[0].GetComponent<SpriteRenderer>().color = Color.green;
-        botList[1].GetComponent<SpriteRenderer>().color = Color.blue;
-
-
+        botList[0].GetComponent<Bot>().SetColor(colorScheme.green);
 
         foreach (GameObject b in botList)
         {
@@ -147,17 +171,5 @@ public class GameManager : MonoBehaviour {
 
 
    
-	// Update is called once per frame
-	void FixedUpdate () {
-
-        if (!boardExists && Time.time >= timeBetweenRounds)
-            initGame();
-
-        else if (!playing && Time.time >= timeNextRound && boardExists)
-        {
-            NewRound();
-        }
-
-
-    }
+	
 }
