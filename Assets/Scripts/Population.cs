@@ -172,9 +172,9 @@ public class Population {
         Bot parent = SelectParent();
         float[] wParent = parent.nn.GetWeights();
         float score = parent.score;
-        float mutRate = (gm.maxScore - score)/gm.maxScore;
+        //float mutRate = ((gm.maxScore - score)/gm.maxScore > 0.025f) ? ((gm.maxScore - score) / gm.maxScore) : 0.025f; //EXPERIMENTATION TO INCREASE LEARNING RATE AT HIGH SCORES
+        float mutRate = (gm.maxScore - score) / gm.maxScore;
         float mutScale = mutRate;
-        //Debug.Log("Mutrate: " + mutRate + ", Mutscale: " + mutScale);
         child.SetWeights(Mutate(wParent, mutRate, mutScale));
         return child;
     }

@@ -9,7 +9,7 @@ public class NeuralNetwork {
 
     //Used for multiLayered networks;
     public int[] hiddenSizes;
-    public List<float[,]> wm;
+    public List<Matrix> wm;
     public int nLayers;
     private int totalNoWeights;
     private GameManager gm;
@@ -56,9 +56,9 @@ public class NeuralNetwork {
 
     #endregion
 
-    void GenerateWeights(out List<float[,]> wList)
+    void GenerateWeights(out List<Matrix> wList)
     {
-        wList = new List<float[,]>();
+        wList = new List<Matrix>();
 
 
         wList.Add(GenerateWeights(nInput, hiddenSizes[0]));
@@ -70,7 +70,7 @@ public class NeuralNetwork {
         wList.Add(GenerateWeights(hiddenSizes[nLayers - 1], nOutput));
     }
 
-    private float[,] GenerateWeights(int rows, int columns)
+    private Matrix GenerateWeights(int rows, int columns)
     {
         float[,] weights = new float[rows + 1, columns];
         for (int i = 0; i < rows + 1; i++)
@@ -81,7 +81,7 @@ public class NeuralNetwork {
                 totalNoWeights++;
             }
         }
-        return weights;
+        return new Matrix(weights);
     }
     
 
@@ -89,7 +89,7 @@ public class NeuralNetwork {
     {
         float[] nextOutVal = new float[0];
         int count=0;
-        foreach (float[,] wi in wm)
+        foreach (Matrix wi in wm)
         {
             count++;
             int sizeIn = inp.Length;
@@ -125,8 +125,9 @@ public class NeuralNetwork {
         int count = 0;
         int rows;
         int columns;
-        foreach(float[,] wi in wm)
+        foreach(Matrix w in wm)
         {
+            float[,] wi = w.MatAsArr();
             rows = wi.GetLength(0);
             columns = wi.GetLength(1);
             for (int i = 0; i < columns; i++)
@@ -146,8 +147,9 @@ public class NeuralNetwork {
         int count = 0;
         int rows;
         int columns;
-        foreach (float[,] wi in wm)
+        foreach (Matrix w in wm)
         {
+            float[,] wi = w.MatAsArr();
             rows = wi.GetLength(0);
             columns = wi.GetLength(1);
             for (int i = 0; i < columns; i++)
@@ -159,6 +161,11 @@ public class NeuralNetwork {
                 }
             }
         }
+    }
+
+    public void PrintWeights()
+    {
+       
     }
 
     #region Activation Functions

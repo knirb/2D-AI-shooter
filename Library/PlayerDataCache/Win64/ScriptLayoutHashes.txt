@@ -1,6 +1,6 @@
 WindowsStandalone
 PlayerPath?
-C:/Unity/Builds/AI Shooter weightProb/AI Shooter.exe
+C:/Unity/Builds/AI Shooter ScoredMutation/AI Shooter.exe
 SceneListBegin?
 Assets/Scenes/StartingScene.unity
 SceneListEnd?
@@ -122,13 +122,13 @@ e1ea12ca952c81d81a9a21fdf34446ed UnityEngine.HoloLens.dll:UnityEngine.EventSyste
 98d69a140ec0084cde3b6a5e09aea295 UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.SpatialMappingCollider
 dfd33ff9ae3ce8d7ca1f22b475ec2387 UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.SpatialMappingRenderer
 96f3ea9f23b6f08e60710ebb4af49174 Unity.TextMeshPro.dll:TMPro.TMP_SpriteAsset
-2ea4d97237971985915db3c52e530d1a Assembly-CSharp.dll:.GameManager
+f09e264313d07161f3fa4d1f9a9dbca9 Assembly-CSharp.dll:.GameManager
 ad7333dff983d7bad0fce4122df6d95d Assembly-CSharp.dll:.Player
 f16835701e71dd5d6fb1fed4b7aff1d8 Unity.TextMeshPro.dll:TMPro.TMP_Asset
 2ef27c5b97011f9eb43a5c082fb49c1c Assembly-CSharp.dll:.Loader
 486cd95c82d8305219c352c06b776e1f Unity.TextMeshPro.dll:TMPro.TMP_SpriteAnimator
 eaf0bcdb10d442a4029d615f41d09957 Unity.TextMeshPro.dll:TMPro.TextContainer
-5ed0b92ad39ed2e2792fd432542a935e Assembly-CSharp.dll:.Bot
+23a0e59fdda6a1cd7566b92b9a076a0c Assembly-CSharp.dll:.Bot
 201273fb4f889724fb090164b7d6c657 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkAnimator
 486cd95c82d8305219c352c06b776e1f UnityEngine.Networking.dll:UnityEngine.Networking.NetworkBehaviour
 0f27c39183b9eb95eba0a228bea28273 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkDiscovery

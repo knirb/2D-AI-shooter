@@ -70,6 +70,10 @@ public class GameManager : MonoBehaviour {
         {
             ToggleShownBots();
         }
+        if (Input.GetKeyDown("p"))
+        {
+            botList[0].GetComponent<Bot>().PrintWeights();
+        }
     }
     void FixedUpdate () {
 

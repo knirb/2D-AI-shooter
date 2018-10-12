@@ -59,6 +59,11 @@ public class Matrix
         return m3;
     }
 
+    public float[,] MatAsArr()
+    {
+        return matrix;
+    }
+
     public static Matrix multiply(Matrix m1, Matrix m2) //Multiplies two matrices, outputs Matrix.
     {
         {

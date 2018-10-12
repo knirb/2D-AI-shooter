@@ -176,6 +176,11 @@ public class Bot : MonoBehaviour {
         }
     }
 
+    public void PrintWeights()
+    {
+        nn.PrintWeights();
+    }
+
     public void SetColor(colorScheme inC)
     {
         switch (inC)

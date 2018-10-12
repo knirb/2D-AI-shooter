@@ -27,7 +27,11 @@ public static class Vector {
         }
         return ret;
     }
-
+    public static float[] matVecMult(float[] v, Matrix m)
+    {
+        float[] ret = matVecMult(v, m.matrix);
+        return ret;
+    }
     //Adds two vectors element-wise, returns sum. 
     public static float[] Add(float[] v1, float[] v2)
     {
