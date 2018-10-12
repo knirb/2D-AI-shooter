@@ -25,8 +25,9 @@ public class GameManager : MonoBehaviour {
     public int nOutputs;
     public int nLayers;
     public int[] nHidden;
-    public HeritageMethod hm; //Defined in Algorithms.cs
-    public ParentPool pp;
+    public HeritageMethod heritageMethod; //Defined in Algorithms.cs
+    public ParentPool useParentPool;
+    public SoftSign softSign;
     public float mutationRate;
     public float specialsMutationRate;
     public int savedPerGen;

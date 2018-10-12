@@ -14,8 +14,9 @@ public class Bot : MonoBehaviour {
     public bool done;
     [HideInInspector] public string ID;
     public float selectionProb;
-    public colorScheme cs;
 
+    private colorScheme cs;
+    private SoftSign ss; 
     private float scoreHitTarget;
     private int ammo;
     private int numberOfInputs; //For NeuralNetwork
@@ -42,6 +43,7 @@ public class Bot : MonoBehaviour {
     {
         
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
+        ss = gm.softSign;
         numberOfInputs = gm.nInputs;
         numberOfOutputs = gm.nOutputs;
         numberOfHidden = gm.nHidden;
@@ -61,7 +63,7 @@ public class Bot : MonoBehaviour {
         scoreHitTarget = gm.hitScore;
     }
 
-
+    
     void FixedUpdate()
     {
         if (!done)
@@ -91,7 +93,7 @@ public class Bot : MonoBehaviour {
         {
             playerPosition = transform.position;
             GenerateInputs(); // Normalizes inputs to scale from 0-1;
-            nnOutput = nn.CalculateOutput(nnInput);
+            nnOutput = nn.CalculateOutput(nnInput,ss);
             shotPosition = new Vector2(nnOutput[0], nnOutput[1]);
             shotDirection = shotPosition.normalized;
             if (shotDirection == Vector2.zero)

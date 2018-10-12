@@ -18,7 +18,7 @@ public class Population {
     private int savedPerGen;
     private int specialsPerGen; //Specials are heavily mutated children to introduce more variation in the gene samples.
     private int parentPoolSize;
-    private HeritageMethod hm;
+    private HeritageMethod heritageMethod;
     private ParentPool pp;
 
     public Population(List<GameObject> bl)
@@ -36,8 +36,8 @@ public class Population {
         nHidden = gm.nHidden;
         nLayers = gm.nLayers;
         parentPoolSize = (gm.parentPoolSize < gm.numberOfPlayers) ? gm.parentPoolSize : gm.numberOfPlayers;
-        hm = gm.hm;
-        pp = gm.pp;
+        heritageMethod = gm.heritageMethod;
+        pp = gm.useParentPool;
         mutationRate = gm.mutationRate;
         specialsMutationRate = gm.specialsMutationRate;
         savedPerGen = gm.savedPerGen;
@@ -104,7 +104,7 @@ public class Population {
     private NeuralNetwork GenerateChildNN()
     {
         NeuralNetwork child = new NeuralNetwork(nInput, nOutput, nHidden, nLayers);
-        switch (hm)
+        switch (heritageMethod)
         {
             case HeritageMethod.weightProbability:
                 child = WeightProbability();

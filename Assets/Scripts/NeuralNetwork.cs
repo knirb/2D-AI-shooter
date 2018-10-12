@@ -12,6 +12,7 @@ public class NeuralNetwork {
     public List<float[,]> wm;
     public int nLayers;
     private int totalNoWeights;
+    private GameManager gm;
 
     public float lowerWeightLimit = -1f;
     public float higherWeightLimit = 1f;
@@ -21,7 +22,6 @@ public class NeuralNetwork {
 
     #region CONSTRUCTORS
     public NeuralNetwork() {
-
         nInput = 6;
         nOutput = 2;
         hiddenSizes = new int[1];
@@ -85,7 +85,7 @@ public class NeuralNetwork {
     }
     
 
-    public float[] CalculateOutput(float[] inp)
+    public float[] CalculateOutput(float[] inp, SoftSign ss)
     {
         float[] nextOutVal = new float[0];
         int count=0;
@@ -108,7 +108,14 @@ public class NeuralNetwork {
             inp = nextOutVal;
             
         }
-        return Softsign(nextOutVal); //NORMAL SOFTSIGN MODE
+        switch (ss)
+        {
+            case SoftSign.yes:
+                return Softsign(nextOutVal);
+            case SoftSign.no:
+                return nextOutVal;
+        }
+        return null; //NORMAL SOFTSIGN MODE
         //return nextOutVal; //FOR TESTING WITHOUT SOFTSIGN;
     }
 
