@@ -165,7 +165,26 @@ public class NeuralNetwork {
 
     public void PrintWeights()
     {
-       
+        
+        List<string> ls = new List<string>();
+        int count = 0;
+        foreach (Matrix w in wm)
+        {
+            string mat = "";
+            for (int i = 0; i < w.rows; i++)
+            {
+                mat += "[ ";
+                for (int j = 0; j < w.columns; j++)
+                {
+                    mat += w.matrix[i, j] + " ";
+                }
+                mat += "] \n";
+            }
+            Debug.Log("w[" + count + "] = \n" + mat);
+            count++;
+            ls.Add(mat);
+        }
+
     }
 
     #region Activation Functions

@@ -9,14 +9,20 @@ public class Matrix
 {
 
     public float[,] matrix;
+    public int rows;
+    public int columns;
 
     public Matrix(float[,] input)
     {
+        rows = input.GetLength(0);
+        columns = input.GetLength(1);
         matrix = input;
     }
 
-    public Matrix(int rows, int columns, float[] input)
+    public Matrix(int inRows, int inColumns, float[] input)
     {
+        rows = inRows;
+        columns = inColumns;
         float[,] mat = new float[rows, columns];
         int count = 0;
         for (int i = 0; i < rows; i++)
