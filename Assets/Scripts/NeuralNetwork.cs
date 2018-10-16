@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 public class NeuralNetwork {
 
@@ -165,7 +166,7 @@ public class NeuralNetwork {
 
     public void PrintWeights()
     {
-        
+
         List<string> ls = new List<string>();
         int count = 0;
         foreach (Matrix w in wm)
@@ -182,11 +183,22 @@ public class NeuralNetwork {
             }
             Debug.Log("w[" + count + "] = \n" + mat);
             count++;
-            ls.Add(mat);
+            ls.Add("w[" + count + "] = \n" + mat);
         }
-
+        try
+        {
+            StreamWriter sw = new StreamWriter(@"C:\Unity\AI Shooter\test.txt", false);
+            foreach (string s in ls)
+            {
+                sw.Write(s);
+            }
+            sw.Close();
+        }
+        catch (System.Exception e)
+        {
+            Debug.Log("Exception detected");
+        }
     }
-
     #region Activation Functions
 
     public float[] Relu(float[] inp) // RELU(x) returns close to zero if x is less than zero, otherwhise x.

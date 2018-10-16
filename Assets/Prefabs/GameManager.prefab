@@ -65,7 +65,7 @@ MonoBehaviour:
   nOutputs: 2
   nLayers: 1
   nHidden: 07000000
-  heritageMethod: 2
+  heritageMethod: 0
   useParentPool: 0
   softSign: 0
   mutationRate: 0.01
