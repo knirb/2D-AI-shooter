@@ -56,22 +56,22 @@ MonoBehaviour:
   timeScale: 2
   timeBetweenRounds: 1
   playerMoveSpeed: 2
-  botMoveSpeed: -2
+  botMoveSpeed: 0
   bulletSpeed: 4
   fireRate: 1
   hitScore: 10
   maxScore: 0
-  nInputs: 7
+  nInputs: 9
   nOutputs: 2
   nLayers: 1
-  nHidden: 07000000
-  heritageMethod: 0
+  nHidden: 09000000
+  heritageMethod: 1
   useParentPool: 0
   softSign: 0
   mutationRate: 0.01
   specialsMutationRate: 0.1
   savedPerGen: 1
-  specialsPerGen: 0
+  specialsPerGen: 5
   parentPoolSize: 10
   bot: {fileID: 1348553838564054, guid: d9e88c200a3277b4798cc72ac54a5547, type: 2}
   background: {fileID: 1276779174057292, guid: d3e053a77bf6c4a44857e42ca45001d9, type: 2}

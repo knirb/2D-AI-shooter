@@ -190,7 +190,7 @@ public class NeuralNetwork {
             StreamWriter sw = new StreamWriter(@"C:\Unity\AI Shooter\test.txt", false);
             foreach (string s in ls)
             {
-                sw.Write(s);
+                sw.WriteLine(s);
             }
             sw.Close();
         }

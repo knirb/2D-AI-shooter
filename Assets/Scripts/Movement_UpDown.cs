@@ -7,14 +7,21 @@ public class Movement_UpDown : MonoBehaviour {
 
     private float movementSpeed;
     private Rigidbody2D rb;
+    public float timeSinceBounce;
 
 	void Start () {
 		rb = GetComponent<Rigidbody2D>();
         rb.velocity = new Vector3(0, 1, 0) * movementSpeed;
+        timeSinceBounce = 0;
 	}
+    private void Update()
+    {
+        timeSinceBounce += Time.deltaTime;
+    }
 
     private void OnTriggerEnter2D(Collider2D hitInfo)
     {
+        timeSinceBounce = 0;
         if (hitInfo.name == "Background")
         {
             rb.velocity = -rb.velocity;

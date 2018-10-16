@@ -49,8 +49,8 @@ public class Bot : MonoBehaviour {
         numberOfHidden = gm.nHidden;
         numberOfLayers = gm.nLayers;
         ammo = gm.shotsPerRound;
-        bulletSpeed = gm.bulletSpeed;
-        fireRate = gm.fireRate;
+        bulletSpeed = gm.bulletSpeed * gm.timeScale;
+        fireRate = gm.fireRate * gm.timeScale;
         rb = GetComponent<Rigidbody2D>();
         bullet.GetComponent<Bullet>().movementSpeed = bulletSpeed;
         mud = GetComponent<Movement_UpDown>();
@@ -80,9 +80,9 @@ public class Bot : MonoBehaviour {
         done = false;
         timeSinceShot = 0;
         rb.position = gm.startPositionBot;
-        mud.setVelocity(new Vector3(0 ,1 ,0 ) * gm.botMoveSpeed);
-        bulletSpeed = gm.bulletSpeed;
-        fireRate = gm.fireRate;
+        mud.setVelocity(new Vector3(0 ,1 ,0 ) * gm.botMoveSpeed*gm.timeScale);
+        bullet.GetComponent<Bullet>().movementSpeed = gm.bulletSpeed * gm.timeScale;
+        fireRate = gm.fireRate * gm.timeScale;
 
 
     }
@@ -218,8 +218,25 @@ public class Bot : MonoBehaviour {
                 case 7:
                     nnInput[4] = enemy.GetComponent<Rigidbody2D>().velocity.x / 10;
                     nnInput[5] = enemy.GetComponent<Rigidbody2D>().velocity.y / 10;
-                    nnInput[6] = (2.35f - enemy.GetComponent<Rigidbody2D>().transform.position.y)/4.7f;
+                    //nnInput[6] = (2.35f - enemy.GetComponent<Rigidbody2D>().transform.position.y)/4.7f;
+                    nnInput[6] = enemy.GetComponent<Movement_UpDown>().timeSinceBounce/2;
                     break;
-            }
+                case 8:
+                    nnInput[4] = enemy.GetComponent<Rigidbody2D>().velocity.x / 10;
+                    nnInput[5] = enemy.GetComponent<Rigidbody2D>().velocity.y / 10;
+                    nnInput[6] = (2.35f - enemy.GetComponent<Rigidbody2D>().transform.position.y) / 4.7f;
+                    nnInput[7] = (-2.35f - enemy.GetComponent<Rigidbody2D>().transform.position.y) / 4.7f;
+                    //nnInput[6] = transform.position.x / (2.35f) - enemy.transform.position.x / (2.35f);
+                    //nnInput[7] = transform.position.y / (2.35f) - enemy.transform.position.y / (2.35f);
+                    break;
+                case 9:
+                    nnInput[4] = enemy.GetComponent<Rigidbody2D>().velocity.x / 10;
+                    nnInput[5] = enemy.GetComponent<Rigidbody2D>().velocity.y / 10;
+                    nnInput[6] = transform.position.x / (2.35f) - enemy.transform.position.x / (2.35f);
+                    nnInput[7] = transform.position.y / (2.35f) - enemy.transform.position.y / (2.35f);
+                    nnInput[8] = enemy.GetComponent<Movement_UpDown>().timeSinceBounce / 2;
+                    break;
+
+        }
     }
 }

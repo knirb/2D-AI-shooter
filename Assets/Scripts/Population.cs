@@ -232,10 +232,13 @@ public class Population {
 
     private NeuralNetwork GenerateSpecial()
     {
-        NeuralNetwork parent = new NeuralNetwork(nInput, nOutput, nHidden, nLayers);
-        parent.SetWeights(botList[0].nn.GetWeights());
-        parent.SetWeights(Mutate(parent.GetWeights(),specialsMutationRate,0.1f));
-        return parent;
+        NeuralNetwork newNet = new NeuralNetwork(nInput, nOutput, nHidden, nLayers);
+        Bot parent = SelectParent();
+        float mutRate = ((gm.maxScore - parent.score) / gm.maxScore > 0.05f) ? ((gm.maxScore - parent.score) / gm.maxScore) : 0.05f;
+        float mutScale = mutRate;
+        //newNet.SetWeights(Mutate(parent.nn.GetWeights(), mutRate,mutScale));
+        newNet.SetWeights(Mutate(parent.nn.GetWeights(), specialsMutationRate, 0.1f));
+        return newNet;
     }
 
     void CalculateProbabilities()

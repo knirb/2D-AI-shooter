@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour {
     public ParentPool useParentPool;
     public SoftSign softSign;
     public float mutationRate;
-    public float specialsMutationRate;
+    public float specialsMutationRate; //CURRENTLY NOT USED; INSTEAD USING SCORE BASED MUTATION
     public int savedPerGen;
     public int specialsPerGen; //Specials are heavily mutated children to introduce more variation in the gene samples.
     public int parentPoolSize;
@@ -57,10 +57,6 @@ public class GameManager : MonoBehaviour {
         boardExists = false;
         intermissionImage = GameObject.Find("IntermissionImage");
         curGen = 1;
-        playerMoveSpeed *= timeScale;
-        botMoveSpeed *= timeScale;
-        bulletSpeed *= timeScale;
-        fireRate *= timeScale;
         maxScore = shotsPerRound * hitScore;
 
     }
@@ -111,7 +107,7 @@ public class GameManager : MonoBehaviour {
         {
             GameObject inst = Instantiate(bot, startPositionBot, Quaternion.identity);
             inst.name = "Bot" + i.ToString(); //For Inspector
-            inst.GetComponent<Movement_UpDown>().setSpeed(botMoveSpeed);
+            inst.GetComponent<Movement_UpDown>().setSpeed(botMoveSpeed * timeScale);
             botList.Add(inst);
         }
         population = new Population(botList);
@@ -121,7 +117,7 @@ public class GameManager : MonoBehaviour {
     {
         enemy = Instantiate(enemyPrefab, startPositionEnemy, Quaternion.identity);
         enemy.name = "Enemy";
-        enemy.GetComponent<Movement_UpDown>().setSpeed(playerMoveSpeed);
+        enemy.GetComponent<Movement_UpDown>().setSpeed(playerMoveSpeed * timeScale);
     }
 
     public void BotDoneShooting(Bot sender) // Called through bots sending message that they are done shooting.
@@ -171,7 +167,7 @@ public class GameManager : MonoBehaviour {
             b.GetComponent<Bot>().RoundReset();
         }
         enemy.transform.position = startPositionEnemy;
-        enemy.GetComponent<Movement_UpDown>().setVelocity(new Vector3(0, 1, 0) * playerMoveSpeed);
+        enemy.GetComponent<Movement_UpDown>().setVelocity(new Vector3(0, 1, 0) * playerMoveSpeed * timeScale);
     }
 
 
