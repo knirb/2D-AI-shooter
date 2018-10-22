@@ -12,19 +12,21 @@ public class Bot : MonoBehaviour {
     
     private float timeSinceShot = 0; //Also used in fireRate;
     public bool done;
+    public bool paused;
     [HideInInspector] public string ID;
     public float selectionProb;
 
-    private colorScheme cs;
-    private SoftSign ss; 
+    private ColorScheme cs;
+    private SoftSign ss;
+    private BotType botType;
     private float scoreHitTarget;
     private int ammo;
+    private float movementSpeed;
     private int numberOfInputs; //For NeuralNetwork
     private int numberOfOutputs; // NN outputs;
     private int numberOfLayers;
     private int[] numberOfHidden;
     private Vector2 shotPosition; //NN will target a position
-    private Vector2 playerPosition;
     private Vector2 shotDirection; //Normalized direction of shot.
     private bool canShoot = false; //Used to create a fireRate - not being able to fire each frame. 
     public int bulletsInAir = 0;
@@ -43,76 +45,149 @@ public class Bot : MonoBehaviour {
     {
         
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
+        cs = ColorScheme.baseColor;
+        botType = gm.botType;
+        
         ss = gm.softSign;
         numberOfInputs = gm.nInputs;
         numberOfOutputs = gm.nOutputs;
         numberOfHidden = gm.nHidden;
         numberOfLayers = gm.nLayers;
         ammo = gm.shotsPerRound;
-        bulletSpeed = gm.bulletSpeed * gm.timeScale;
-        fireRate = gm.fireRate * gm.timeScale;
+        bulletSpeed = gm.bulletSpeed;
+        fireRate = gm.fireRate;
+        movementSpeed = gm.botMoveSpeed;
         rb = GetComponent<Rigidbody2D>();
         bullet.GetComponent<Bullet>().movementSpeed = bulletSpeed;
-        mud = GetComponent<Movement_UpDown>();
+        CheckType();
+
         sr = GetComponent<SpriteRenderer>();
         baseColor = sr.color;
-        cs = colorScheme.baseColor;
+        
         nn = new NeuralNetwork(numberOfInputs, numberOfOutputs, numberOfHidden, numberOfLayers); //Currently using non parametrized constructor.
         ID = gameObject.name;
         enemy = GameObject.Find("Enemy");
         scoreHitTarget = gm.hitScore;
+        paused = false;
     }
+    void CheckType()
+    {
+        switch (botType)
+        {
+            case BotType.mud:
+                mud = GetComponent<Movement_UpDown>();
+                mud.setSpeed(-movementSpeed);
+                break;
+            case BotType.selfMoving:
+                Destroy(GetComponent<Movement_UpDown>());
+                break;
 
+        }
+    }
     
     void FixedUpdate()
     {
-        if (!done)
+        if (!done && !paused)
         {
-            TryShooting(); // TryShooting does what it says
+            if (!canShoot)
+                ReloadWeapon();
+            TryActing(); // TryShooting does what it says
             CheckIfDone(); 
         }
         
     }
+    public void ReloadWeapon()
+    {
+        timeSinceShot += Time.deltaTime;
+        if (timeSinceShot >= 1 / fireRate && ammo > 0)
+            canShoot = true;
+    }
+    public void Pause()
+    {
+        paused = true;
+        if (botType == BotType.mud) { mud.setVelocity(0); }       
+    }
+    public void Unpause()
+    {
+        if (botType == BotType.mud) { mud.setVelocity(movementSpeed); }
+        paused = false;
 
+    }
     public void RoundReset()
     {
         ammo = gm.shotsPerRound;
         done = false;
         timeSinceShot = 0;
         rb.position = gm.startPositionBot;
-        mud.setVelocity(new Vector3(0 ,1 ,0 ) * gm.botMoveSpeed*gm.timeScale);
-        bullet.GetComponent<Bullet>().movementSpeed = gm.bulletSpeed * gm.timeScale;
-        fireRate = gm.fireRate * gm.timeScale;
+        BotSpecificReset();
+        bullet.GetComponent<Bullet>().movementSpeed = gm.bulletSpeed;
+        fireRate = gm.fireRate;
+        //bulletsInAir = 0;
 
 
     }
-    //Checks if canShoot and acts accordingly.
-    void TryShooting()
+    private void BotSpecificReset()
     {
-        if (canShoot == true)
+        switch (botType)
         {
-            playerPosition = transform.position;
-            GenerateInputs(); // Normalizes inputs to scale from 0-1;
-            nnOutput = nn.CalculateOutput(nnInput,ss);
-            shotPosition = new Vector2(nnOutput[0], nnOutput[1]);
-            shotDirection = shotPosition.normalized;
-            if (shotDirection == Vector2.zero)
-            {
-                canShoot = false;
-                timeSinceShot = 0;
-                ammo--;
-                return;
-            }
-            shoot(shotDirection);
+            case BotType.mud:
+                mud.setVelocity(Vector2.down*movementSpeed);
+                break;
 
-            timeSinceShot = 0;
+            case BotType.selfMoving:
+                break;
         }
-        else
+    }
+    //Checks if canShoot and acts accordingly.
+    void TryActing()
+    {
+        GenerateInputs();
+        nnOutput = nn.CalculateOutput(nnInput, ss);
+
+        if (numberOfOutputs == 2 && canShoot)
+            Shoot();
+        else if (numberOfOutputs >= 3)
         {
-            timeSinceShot += Time.deltaTime;
-            if (timeSinceShot >= 1 / fireRate && ammo > 0)
-                canShoot = true;
+            if (canShoot && WantToShoot())
+            {
+                Shoot();
+            }
         }
+        if (numberOfOutputs >= 5)
+            TryMoving();
+    }
+    private void TryMoving()
+    {
+        float moveX = (nnOutput[3] > 0.5f) ? 1f : (nnOutput[3] < -0.5f) ? -1 : 0f;
+        float moveY = (nnOutput[4] > 0.5f) ? 1f : (nnOutput[4] < -0.5f) ? -1 : 0f;
+        rb.velocity = Vector2.up*moveY*movementSpeed + Vector2.right*moveX*movementSpeed;
+    }
+    private void OnTriggerEnter2D(Collider2D hitInfo)
+    {
+        
+    }
+
+        private bool WantToShoot()
+    {
+        if (nnOutput[2] > 0)
+            return true;
+        else
+            return false;
+    }
+    private void Shoot()
+    {
+        shotPosition = new Vector2(nnOutput[0], nnOutput[1]);
+        shotDirection = shotPosition.normalized;
+        if (shotDirection == Vector2.zero)
+        {
+            canShoot = false;
+            timeSinceShot = 0;
+            ammo--;
+            return;
+        }
+        shoot(shotDirection);
+
+        timeSinceShot = 0;
     }
 
     //Called if TryShoot deems it should.
@@ -120,7 +195,7 @@ public class Bot : MonoBehaviour {
     {
 
         float shotAngle = Mathf.Atan2(Direction.y, Direction.x);
-        Vector2 instatiatePosition = playerPosition + new Vector2(0.24f * Direction.x, 0.24f * Direction.y);
+        Vector2 instatiatePosition = (Vector2)transform.position + new Vector2(0.24f * Direction.x, 0.24f * Direction.y);
 
         GameObject inst = Instantiate(bullet, instatiatePosition, Quaternion.AngleAxis((180 / Mathf.PI) * shotAngle, new Vector3(0, 0, 1)));
         inst.GetComponent<Bullet>().shooter = gameObject;
@@ -165,13 +240,13 @@ public class Bot : MonoBehaviour {
     {
         switch (cs)
         {
-            case colorScheme.baseColor:
+            case ColorScheme.baseColor:
                 sr.color = Color.clear;
-                cs = colorScheme.clear;
+                cs = ColorScheme.clear;
                 break;
-            case colorScheme.clear:
+            case ColorScheme.clear:
                 sr.color = baseColor;
-                cs = colorScheme.baseColor;
+                cs = ColorScheme.baseColor;
                 break;
         }
     }
@@ -181,21 +256,21 @@ public class Bot : MonoBehaviour {
         nn.PrintWeights();
     }
 
-    public void SetColor(colorScheme inC)
+    public void SetColor(ColorScheme inC)
     {
         switch (inC)
         {
-            case colorScheme.green:
+            case ColorScheme.green:
                 sr.color = Color.green;
-                cs = colorScheme.green;
+                cs = ColorScheme.green;
                 break;
-            case colorScheme.clear:
+            case ColorScheme.clear:
                 sr.color = Color.clear;
-                cs = colorScheme.clear;
+                cs = ColorScheme.clear;
                 break;
-            case colorScheme.baseColor:
+            case ColorScheme.baseColor:
                 sr.color = baseColor;
-                cs = colorScheme.baseColor;
+                cs = ColorScheme.baseColor;
                 break;
         }
     }
@@ -218,8 +293,8 @@ public class Bot : MonoBehaviour {
                 case 7:
                     nnInput[4] = enemy.GetComponent<Rigidbody2D>().velocity.x / 10;
                     nnInput[5] = enemy.GetComponent<Rigidbody2D>().velocity.y / 10;
-                    //nnInput[6] = (2.35f - enemy.GetComponent<Rigidbody2D>().transform.position.y)/4.7f;
-                    nnInput[6] = enemy.GetComponent<Movement_UpDown>().timeSinceBounce/2;
+                    nnInput[6] = (2.35f - enemy.GetComponent<Rigidbody2D>().transform.position.y)/4.7f;
+                    //nnInput[6] = enemy.GetComponent<Movement_UpDown>().timeSinceBounce/2;
                     break;
                 case 8:
                     nnInput[4] = enemy.GetComponent<Rigidbody2D>().velocity.x / 10;

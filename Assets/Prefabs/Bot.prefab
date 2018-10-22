@@ -90,6 +90,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a368e71fea9a9b40b75d86eedc2076c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  timeSinceBounce: 0
 --- !u!114 &114160254280856586
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -103,8 +104,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bullet: {fileID: 1511506436160116, guid: 9efaa4508a10c034ba1f42f23b7b8dc3, type: 2}
   score: 0
-  scoreHitTarget: 10
   done: 0
+  paused: 0
   ID: 
   selectionProb: 0
   bulletsInAir: 0

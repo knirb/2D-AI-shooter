@@ -59,7 +59,6 @@ public class Population {
     private void CalculateFitness() //Sorts bots in order of fitness/score
     {
         botList.Sort((x, y) => y.score.CompareTo(x.score));
-        botList.Sort((x, y) => y.score.CompareTo(x.score));
         
     }
 

@@ -55,16 +55,19 @@ MonoBehaviour:
   shotsPerRound: 10
   timeScale: 2
   timeBetweenRounds: 1
-  playerMoveSpeed: 2
-  botMoveSpeed: 0
+  timePerRound: 16
+  roundTimer: 0
+  enemyMoveSpeed: 2
+  botMoveSpeed: 2
   bulletSpeed: 4
   fireRate: 1
   hitScore: 10
   maxScore: 0
-  nInputs: 9
-  nOutputs: 2
+  nInputs: 7
+  nOutputs: 3
   nLayers: 1
-  nHidden: 09000000
+  nHidden: 07000000
+  botType: 0
   heritageMethod: 1
   useParentPool: 0
   softSign: 0
@@ -80,3 +83,5 @@ MonoBehaviour:
   intermissionImage: {fileID: 0}
   startPositionBot: {x: -1.6, y: 0, z: 0}
   startPositionEnemy: {x: 1.6, y: 0, z: 0}
+  playing: 0
+  paused: 0
